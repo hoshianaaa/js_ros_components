@@ -3,21 +3,21 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
 
+
       <script src="./build/roslib.js"></script>
 
       <! https://unpkg.com/konva@8.4.0/konva.js >
       <script src="./build/konva.js"></script>
 
-
+        <link rel="stylesheet" href="css/layout.css">
       </head>
 
-      <canvas style="position:absolute; top:0px" id="canvas" width="500" height="500" ></canvas>
+      <canvas style="position:absolute; top:0px" id="canvas" width="1000" height="1000" ></canvas>
       <div style="position:absolute; top:0px" id="container"></div>
 
     <body>
     <script type="text/javascript">
 
-/*
       var stage = new Konva.Stage({
       container: 'container',
       width: 1000,
@@ -56,7 +56,7 @@
       layer.add(tr);
       tr.rotateEnabled(false)
       tr.nodes([rect]);
-*/
+
 
   var detect_points = [];
 
@@ -242,7 +242,7 @@
 
     }
     // ↓ MJPG-streamerの静止画像をロード
-    image.src = "http://localhost:8080/snapshot?topic=/image_converter/output_video";
+    image.src = "http://localhost:8080/snapshot?topic=/usb_cam/image_raw";
     //console.log(image);
     requestAnimationFrame(render);
 
