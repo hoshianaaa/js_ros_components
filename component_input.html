@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+
+        /* button: https://public-constructor.com/html-css-rounded-corner-button/ */
+
+        .rounded-corner {
+          background-color: #0a458a;
+          width: 100px;
+          height: 20px;
+          color: #FFFFFF;
+          font-size: 17px;
+          line-height: 0;
+          border-radius: 10px;
+      }
+
+
+    </style>
+
+<meta charset="utf-8" />
+
+<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+<script>
+  // Connecting to ROS
+  // -----------------
+
+  var data_name = "";
+  var pub_topic_name = "data";
+  var sub_topic_name = "state";
+  var ros = null;
+  var pub = null;
+  var sub = null;
+// --------- get window parameter ---------
+
+    window.onload = function() {
+
+        const url = new URL(window.location.href);
+
+        const params = url.searchParams;
+
+        pub_topic_name = params.get("pub_topic_name");
+        sub_topic_name = params.get("sub_topic_name");
+        data_name = params.get("data_name");
+
+        document.getElementById("output").innerText = data_name;
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+/*
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : pub_topic_name,
+          messageType : 'std_msgs/Float64'
+        });
+        */
+
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : sub_topic_name,
+          messageType : 'std_msgs/Float64'
+        });
+
+        sub.subscribe(function(message) {
+          console.log('Received message on ' + sub.name + ': ' + message.data);
+          var input = document.getElementById("input");
+          input.value = message.data;
+
+//          listener.unsubscribe();
+        });
+
+    }
+
+/*
+    var msg = new ROSLIB.Message({
+      data: 33.333
+    });
+
+    function buttonClick() {
+      msg.data = 11.111;
+      pub.publish(msg);
+    }
+
+*/
+
+
+</script>
+</head>
+
+<body>
+      <!--button type=”button” class="rounded-corner" onclick="buttonClick()">reset</button-->
+      <a id="output"></a>
+      <input type="number" id="input" name="input" readonly="readonly"/>
+</body>
+</html>
+
