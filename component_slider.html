@@ -17,6 +17,7 @@
     var slider_max_val = 1.0;
     var slider_step = 0.01;
     var input_step = 0.01;
+    var name = "value";
     var ros = null;
     var pub = null;
 
@@ -53,6 +54,14 @@
         p = params.get("input_step");
         if (p!=null)
           input_step = p;
+        p = params.get("name");
+        if (p!=null)
+        {
+          name = p;
+          var out_frame = document.getElementById("output");
+          out_frame.innerText = name;
+        }
+
 
         slider = document.getElementById("slider1");
         slider.min = slider_min_val;
@@ -92,12 +101,9 @@
     function change_input() {
       var input = document.getElementById("input");
       var slider = document.getElementById("slider1");
-      var out_frame = document.getElementById("output");
 
       slider.value = Number(input.value);
 
-      out_frame.innerText = "value: " + slider.value;
-      
       msg.data = Number(slider.value);
       pub.publish(msg);
 
@@ -105,9 +111,6 @@
 
     function change_slider() {
       var slider = document.getElementById("slider1");
-      var out_frame = document.getElementById("output");
-
-      out_frame.innerText = "value: " + slider.value;
 
       var input = document.getElementById("input");
       input.value = slider.value;
