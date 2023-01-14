@@ -15,6 +15,8 @@
     var default_value = 0;
     var slider_min_val = -1.0;
     var slider_max_val = 1.0;
+    var slider_step = 0.01;
+    var input_step = 0.01;
     var ros = null;
     var pub = null;
 
@@ -42,20 +44,27 @@
         
         p = params.get("default_value");
         if (p!=null)
-        {
-          console.log(p);
           default_value = p;
-        }
+
+        p = params.get("slider_step");
+        if (p!=null)
+          slider_step = p;
+
+        p = params.get("input_step");
+        if (p!=null)
+          input_step = p;
 
         slider = document.getElementById("slider1");
         slider.min = slider_min_val;
         slider.max = slider_max_val;
         slider.value = default_value;
+        slider.step = slider_step;
 
         input = document.getElementById("input");
         input.min = slider_min_val;
         input.max = slider_max_val;
         input.value = default_value;
+        input.step = input_step;
 
         ros = new ROSLIB.Ros();
 
