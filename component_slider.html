@@ -28,17 +28,34 @@
         const params = url.searchParams;
 
         // パラメータから「username」を取得
-        topic_name = params.get("topic_name");
-        slider_min_val = params.get("slider_min_val");
-        slider_max_val = params.get("slider_max_val");
+        p = params.get("topic_name");
+        if (p!=null)
+          topic_name = p;
+
+        p = params.get("slider_min_val");
+        if (p!=null)
+          slider_min_val = p;
+
+        p = params.get("slider_max_val");
+        if (p!=null)
+          slider_max_val = p;
+        
+        p = params.get("default_value");
+        if (p!=null)
+        {
+          console.log(p);
+          default_value = p;
+        }
 
         slider = document.getElementById("slider1");
         slider.min = slider_min_val;
         slider.max = slider_max_val;
+        slider.value = default_value;
 
         input = document.getElementById("input");
         input.min = slider_min_val;
         input.max = slider_max_val;
+        input.value = default_value;
 
         ros = new ROSLIB.Ros();
 
