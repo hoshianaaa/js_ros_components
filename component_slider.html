@@ -20,6 +20,7 @@
     var name = "value";
     var ros = null;
     var pub = null;
+    var data_type = "Float64";
 
 // --------- get window parameter ---------
 
@@ -61,7 +62,9 @@
           var out_frame = document.getElementById("output");
           out_frame.innerText = name;
         }
-
+        p = params.get("data_type");
+        if (p!=null)
+          data_type = p;
 
         slider = document.getElementById("slider1");
         slider.min = slider_min_val;
@@ -83,7 +86,7 @@
           ros : ros,
           name : topic_name,
           //messageType : 'geometry_msgs/Twist'
-          messageType : 'std_msgs/Float64'
+          messageType : 'std_msgs/' + data_type
         });
 
 
