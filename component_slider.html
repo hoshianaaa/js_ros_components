@@ -36,6 +36,10 @@
         slider.min = slider_min_val;
         slider.max = slider_max_val;
 
+        input = document.getElementById("input");
+        input.min = slider_min_val;
+        input.max = slider_max_val;
+
         ros = new ROSLIB.Ros();
 
         ros.connect('ws://localhost:9090');
@@ -59,14 +63,32 @@
       data: 33.333
     });
 
-    function change_slider() {
+    function change_input() {
+      var input = document.getElementById("input");
       var slider = document.getElementById("slider1");
       var out_frame = document.getElementById("output");
+
+      slider.value = Number(input.value);
 
       out_frame.innerText = "value: " + slider.value;
       
       msg.data = Number(slider.value);
       pub.publish(msg);
+
+    }
+
+    function change_slider() {
+      var slider = document.getElementById("slider1");
+      var out_frame = document.getElementById("output");
+
+      out_frame.innerText = "value: " + slider.value;
+
+      var input = document.getElementById("input");
+      input.value = slider.value;
+      
+      msg.data = Number(slider.value);
+      pub.publish(msg);
+
     }
 
     function buttonClick() {
@@ -83,6 +105,8 @@
         </div>
         <div style="display:flex">
         <input id="slider1" type="range" class="slider" value="0" min="-100" max="100" step=0.01 oninput="change_slider();"/>
+        <input type="number" id="input" name="input"
+       value="0" min="-100" max="100" step="0.01" oninput="change_input();">
         <button type=”button” class="rounded-corner" onclick="buttonClick()">reset</button>
         </div>
 
