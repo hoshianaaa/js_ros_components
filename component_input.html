@@ -18,6 +18,7 @@
   var ros = null;
   var pub = null;
   var sub = null;
+  var data_type = "Float64";
 // --------- get window parameter ---------
 
     window.onload = function() {
@@ -25,6 +26,10 @@
         const url = new URL(window.location.href);
 
         const params = url.searchParams;
+
+        p = params.get("data_type");
+        if (p!=null)
+          data_type = p;
 
         pub_topic_name = params.get("pub_topic_name");
         sub_topic_name = params.get("sub_topic_name");
@@ -47,7 +52,7 @@
         sub = new ROSLIB.Topic({
           ros : ros,
           name : sub_topic_name,
-          messageType : 'std_msgs/Float64'
+          messageType : 'std_msgs/' + data_type
         });
 
         sub.subscribe(function(message) {
