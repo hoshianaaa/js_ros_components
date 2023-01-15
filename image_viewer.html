@@ -17,6 +17,7 @@
     <body>
     <script type="text/javascript">
 
+      var topic_name = "image_raw";
 /*
       var stage = new Konva.Stage({
       container: 'container',
@@ -104,6 +105,16 @@
 
 
   window.onload = function(){
+        // URLを取得
+        const url = new URL(window.location.href);
+
+        // URLSearchParamsオブジェクトを取得
+        const params = url.searchParams;
+
+        // パラメータから「username」を取得
+        p = params.get("topic_name");
+        if (p!=null)
+          topic_name = p;
   };
 
   window.onunload = function(){
@@ -242,7 +253,7 @@
 
     }
     // ↓ MJPG-streamerの静止画像をロード
-    image.src = "http://localhost:8080/snapshot?topic=/image_converter/output_video";
+    image.src = "http://localhost:8080/snapshot?topic=" + topic_name;
     //console.log(image);
     requestAnimationFrame(render);
 
