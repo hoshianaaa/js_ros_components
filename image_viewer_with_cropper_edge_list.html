@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+
+
+      <script src="./build/roslib.js"></script>
+
+      <! https://unpkg.com/konva@8.4.0/konva.js >
+      <script src="./build/konva.js"></script>
+      <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+        <link rel="stylesheet" href="css/layout.css">
+      </head>
+
+      <canvas style="position:absolute; top:0px" id="canvas" width="1000" height="800" ></canvas>
+      <canvas style="position:absolute; top:100px" id="edge_list_canvas" width="1000" height="100" ></canvas>
+      <div style="position:absolute; top:0px" id="container"></div>
+
+    <body>
+    <script type="text/javascript">
+
+      var stage = new Konva.Stage({
+      container: 'container',
+      width: 1000,
+      height: 800,
+    });
+
+      var layer = new Konva.Layer();
+      stage.add(layer);
+
+      var rect = new Konva.Rect({
+        x: 500,
+        y: 500,
+        width: 100,
+        height: 90,
+        fill: 'gray',
+        name: 'rect',
+        stroke: 'blue',
+        draggable: true,
+        opacity: 0.1,
+      });
+      layer.add(rect);
+
+      var MAX_WIDTH = 1000;
+      // create new transformer
+      var tr = new Konva.Transformer({
+        boundBoxFunc: function (oldBoundBox, newBoundBox) {
+          // "boundBox" is an object with
+          // x, y, width, height and rotation properties
+          // transformer tool will try to fit nodes into that box
+
+          // the logic is simple, if new width is too big
+          // we will return previous state
+          return newBoundBox;
+        },
+      });
+      layer.add(tr);
+      tr.rotateEnabled(false)
+      tr.nodes([rect]);
+
+
+  var detect_points = [];
+
+  ros = new ROSLIB.Ros();
+
+  ros.connect('ws://' + location.hostname + ':9090');
+
+  var pub = new ROSLIB.Topic({
+    ros : ros,
+    name : 'params',
+    messageType : 'std_msgs/String'
+  });
+
+  var msg = new ROSLIB.Message({
+    data: ""
+  });
+
+  var json = {
+    "area_p1_x": 0,
+    "area_p1_y": 0,
+    "area_p2_x": 0,
+    "area_p2_y": 0,
+  }
+
+  let sub = mqtt.connect('ws://localhost:8883');
+let topic = "/edge_detection/edge_list"
+
+var data_list = [];
+
+sub.subscribe(topic);
+
+sub.on('message', function (topic, message) { // message is Buffer
+  data = message.toString()
+  //console.log("sub: " + msg);
+  data_list = data.split(',').map(Number);
+  console.log("data list");
+  console.log(data_list);
+});
+
+
+  window.onload = function(){
+  };
+
+  window.onunload = function(){
+      ros.close();
+  };
+
+  //const canvas = document.getElementById("canvas");
+  var canvas = document.getElementsByTagName("canvas")[0];
+  const edge_list_canvas = document.getElementById("edge_list_canvas");
+
+//  https://developer.mozilla.org/ja/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+  function draw_rect(dx, dy, ctx){
+    ctx.clearRect(0,0,edge_list_canvas.width, edge_list_canvas.height);
+    ctx.strokeStyle = 'deepskyblue';
+    ctx.strokeRect(0,0,dx,dy);
+    ctx.stroke();
+  }
+
+  function draw_point(x, y, ctx){
+    ctx.fillStyle = 'green';
+    ctx.fillRect(x,y,1,1);
+  }
+
+  function draw_circle(center_x, center_y, ctx) {
+
+    // 枠線のみ
+    var radius = 15;
+    ctx.beginPath();
+    ctx.arc(center_x, center_y, radius, 0, Math.PI * 2, true);
+    ctx.strokeStyle = 'deepskyblue';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+  }
+
+  function draw_cross(ctx, center_x, center_y) {
+
+      var line_len = 30;
+
+      p1 = { x: center_x , y: center_y - line_len / 2 };
+      p2 = { x: center_x , y: center_y + line_len / 2 };
+      p3 = { x: center_x - line_len / 2, y: center_y };
+      p4 = { x: center_x + line_len / 2, y: center_y };
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+
+      ctx.moveTo(p3.x, p3.y);
+      ctx.lineTo(p4.x, p4.y);
+
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+  }
+
+// https://stackoverflow.com/questions/23104582/scaling-an-image-to-fit-on-canvas
+
+  function drawImageScaled(img, ctx) {
+     var canvas = ctx.canvas ;
+     var hRatio = canvas.width  / img.width    ;
+     var vRatio =  canvas.height / img.height  ;
+     var ratio  = Math.min ( hRatio, vRatio );
+     var centerShift_x = ( canvas.width - img.width*ratio ) / 2;
+     var centerShift_y = ( canvas.height - img.height*ratio ) / 2;
+     ctx.clearRect(0,0,canvas.width, canvas.height);
+     ctx.drawImage(img, 0,0, img.width, img.height,
+                        centerShift_x,centerShift_y,img.width*ratio, img.height*ratio);
+
+     console.log("ratio", ratio);
+     console.log("centerShift", centerShift_x, centerShift_y);
+
+     return [ratio, centerShift_x, centerShift_y];
+
+  }
+
+  function web2pix(ratio, shift_x, shift_y, p) {
+    var r = ratio;
+    var sx = shift_x;
+    var sy = shift_y;
+
+    var px = p[0] - sx;
+    var py = p[1] - sy;
+
+    px = px / r;
+    py = py / r;
+
+    return [px, py];
+  }
+
+  function render_edge_list(x,y,size) {
+    //var edge_list_canvas = document.getElementsById("edge_list_canvas");
+    console.log("AAAAAAAAAAAAAAAAAAAA");
+    console.log(edge_list_canvas);
+    var ctx = edge_list_canvas.getContext("2d");
+    draw_rect(size,100,ctx);
+//    edge_list_canvas.width = size+10;
+//    edge_list_canvas.height = 100+10;
+    edge_list_canvas.style.left = String(x) + 'px';
+    edge_list_canvas.style.top = String(y) + 'px';
+  }
+
+  function render() {
+
+    const image = new Image();
+    image.onload = function(){
+
+      var ctx = canvas.getContext("2d");
+
+      ret = drawImageScaled(image, ctx);
+
+/*
+      for (var i=0;i<detect_points.length;i++)
+      {
+        dp = detect_points[i]; 
+        draw_point(dp.x,dp.y,ctx);
+      }
+*/
+
+      // rect pos
+
+      r1 = rect.attrs;
+      console.log(r1);
+
+      /*
+      console.log(a.x, a.y);
+      console.log(a.width, a.height);
+      console.log(a.rotation);
+      */
+
+      var p1,p2;
+      if (r1.scaleX == null)
+      {
+        p1 = [r1.x, r1.y];
+        p2 = [r1.x + r1.width * 1, r1.y + r1.height * 1];
+      }
+      else
+      {
+        p1 = [r1.x, r1.y];
+        p2 = [r1.x + r1.width * r1.scaleX, r1.y + r1.height * r1.scaleY];
+      }
+
+
+      p1 = web2pix(ret[0], ret[1], ret[2], p1);
+      p2 = web2pix(ret[0], ret[1], ret[2], p2);
+
+      if ((p1[0] != json["area_p1_x"]) || (p1[1] != json["area_p1_y"]) || (p2[0] != json["area_p2_x"]) || (p2[1] != json["area_p2_y"]))
+      {
+        json["area_p1_x"] = p1[0];
+        json["area_p1_y"] = p1[1];
+        json["area_p2_x"] = p2[0];
+        json["area_p2_y"] = p2[1];
+        msg.data = JSON.stringify(json);
+        pub.publish(msg);
+      }
+      console.log(p1, p2);
+
+      render_edge_list(r1.x, r1.y + r1.height * r1.scaleY + 30, p2[0] - p1[0]);
+
+    }
+    // ↓ MJPG-streamerの静止画像をロード
+    image.src = "http://localhost:8080/snapshot?topic=/usb_cam/image_raw";
+    //console.log(image);
+    requestAnimationFrame(render);
+
+    console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+
+  }
+
+  render();
+
+    </script>
+  </body>
+</html>
+
