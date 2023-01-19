@@ -142,7 +142,7 @@ sub.on('message', function (topic, message) { // message is Buffer
 
   }
 
-  function draw_graph(ctx, points, stroke = 'red', width = 2) {
+  function draw_graph(ctx, points, scaleX, stroke = 'red', width = 2) {
     // start a new path
     ctx.beginPath();
 
@@ -153,9 +153,9 @@ sub.on('message', function (topic, message) { // message is Buffer
       {
         var p = 100 - points[i]*100/255;
         if (i==0)
-          ctx.moveTo(i, p);
+          ctx.moveTo(i*scaleX, p);
         else
-          ctx.lineTo(i, p);
+          ctx.lineTo(i*scaleX, p);
       }
     }
 
@@ -226,7 +226,7 @@ sub.on('message', function (topic, message) { // message is Buffer
   }
 
   var render_edge_list_lock = 0;
-  function render_edge_list(x,y,size) {
+  function render_edge_list(x,y,size, scaleX) {
     if (render_edge_list_lock == 0)
     {
       render_edge_list_lock = 1;
@@ -234,12 +234,12 @@ sub.on('message', function (topic, message) { // message is Buffer
       console.log("AAAAAAAAAAAAAAAAAAAA");
       console.log(edge_list_canvas);
       var ctx = edge_list_canvas.getContext("2d");
-      draw_rect(size,100,ctx);
+      draw_rect(size*scaleX,100,ctx);
       var d = data_list;
       console.log("size:",d.length);
       console.log("rect size:",size);
 
-      draw_graph(ctx,d);
+      draw_graph(ctx,d,scaleX);
 /*
       if (d.length>0)
       {
@@ -315,7 +315,7 @@ sub.on('message', function (topic, message) { // message is Buffer
       }
       console.log(p1, p2);
 
-      render_edge_list(r1.x, r1.y + r1.height * r1.scaleY + 30, p2[0] - p1[0]);
+      render_edge_list(r1.x + 7, r1.y + r1.height * r1.scaleY + 30, p2[0] - p1[0], ret[0]);
 
     }
     // ↓ MJPG-streamerの静止画像をロード
