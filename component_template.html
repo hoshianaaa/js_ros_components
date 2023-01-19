@@ -13,7 +13,9 @@
   // -----------------
 
   var pub_topic_name = "data";
+  var pub_data_type = "Float64";
   var sub_topic_name = "state";
+  var sub_data_type = "Float64";
   var ros = null;
   var pub = null;
   var sub = null;
@@ -25,8 +27,21 @@
 
         const params = url.searchParams;
 
-        pub_topic_name = params.get("pub_topic_name");
-        sub_topic_name = params.get("sub_topic_name");
+        p = params.get("pub_topic_name");
+        if (p!=null)
+          pub_topic_name = p
+
+        p = params.get("sub_topic_name");
+        if (p!=null)
+          sub_topic_name = p
+
+        p = params.get("pub_data_type");
+        if (p!=null)
+          pub_data_type = p
+
+        p = params.get("sub_data_type");
+        if (p!=null)
+          sub_data_type = p
 
         ros = new ROSLIB.Ros();
 
@@ -35,13 +50,13 @@
         pub = new ROSLIB.Topic({
           ros : ros,
           name : pub_topic_name,
-          messageType : 'std_msgs/Float64'
+          messageType : 'std_msgs/' + pub_data_type
         });
 
         sub = new ROSLIB.Topic({
           ros : ros,
           name : sub_topic_name,
-          messageType : 'std_msgs/Float64'
+          messageType : 'std_msgs/' + sub_data_type
         });
 
         sub.subscribe(function(message) {

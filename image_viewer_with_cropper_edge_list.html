@@ -90,12 +90,19 @@ var data_list = [];
 
 sub.subscribe(topic);
 
+var sub_lock = 0;
 sub.on('message', function (topic, message) { // message is Buffer
-  data = message.toString()
-  //console.log("sub: " + msg);
-  data_list = data.split(',').map(Number);
-  console.log("data list");
-  console.log(data_list);
+  if (sub_lock==0)
+  {
+    sub_lock = 1;
+    data = message.toString()
+    //console.log("sub: " + msg);
+    var d = data.split(',').map(Number);
+    console.log("data list");
+    console.log(data_list);
+    data_list = d;
+    sub_lock = 0;
+  }
 });
 
 
@@ -118,8 +125,8 @@ sub.on('message', function (topic, message) { // message is Buffer
     ctx.stroke();
   }
 
-  function draw_point(x, y, ctx){
-    ctx.fillStyle = 'green';
+  function draw_point(x, y, ctx, color='green'){
+    ctx.fillStyle = color;
     ctx.fillRect(x,y,1,1);
   }
 
@@ -133,6 +140,33 @@ sub.on('message', function (topic, message) { // message is Buffer
     ctx.lineWidth = 1;
     ctx.stroke();
 
+  }
+
+  function draw_graph(ctx, points, stroke = 'red', width = 2) {
+    // start a new path
+    ctx.beginPath();
+
+    // place the cursor from the point the line should be started 
+    if (points.length>0)
+    {
+      for (var i=0;i<points.length;i++)
+      {
+        var p = 100 - points[i]*100/255;
+        if (i==0)
+          ctx.moveTo(i, p);
+        else
+          ctx.lineTo(i, p);
+      }
+    }
+
+    // set strokecolor
+    ctx.strokeStyle = stroke;
+
+    // set lineWidht 
+    ctx.lineWidth = width;
+
+    // add stroke to the line 
+    ctx.stroke();
   }
 
   function draw_cross(ctx, center_x, center_y) {
@@ -191,16 +225,39 @@ sub.on('message', function (topic, message) { // message is Buffer
     return [px, py];
   }
 
+  var render_edge_list_lock = 0;
   function render_edge_list(x,y,size) {
-    //var edge_list_canvas = document.getElementsById("edge_list_canvas");
-    console.log("AAAAAAAAAAAAAAAAAAAA");
-    console.log(edge_list_canvas);
-    var ctx = edge_list_canvas.getContext("2d");
-    draw_rect(size,100,ctx);
-//    edge_list_canvas.width = size+10;
-//    edge_list_canvas.height = 100+10;
-    edge_list_canvas.style.left = String(x) + 'px';
-    edge_list_canvas.style.top = String(y) + 'px';
+    if (render_edge_list_lock == 0)
+    {
+      render_edge_list_lock = 1;
+      //var edge_list_canvas = document.getElementsById("edge_list_canvas");
+      console.log("AAAAAAAAAAAAAAAAAAAA");
+      console.log(edge_list_canvas);
+      var ctx = edge_list_canvas.getContext("2d");
+      draw_rect(size,100,ctx);
+      var d = data_list;
+      console.log("size:",d.length);
+      console.log("rect size:",size);
+
+      draw_graph(ctx,d);
+/*
+      if (d.length>0)
+      {
+        for (var i=0;i<d.length;i++)
+        {
+          console.log(d[i]);
+          draw_point(i, d[i]/3, ctx, "red");
+        }
+      }
+
+*/
+  //    edge_list_canvas.width = size+10;
+  //    edge_list_canvas.height = 100+10;
+      edge_list_canvas.style.left = String(x) + 'px';
+      edge_list_canvas.style.top = String(y) + 'px';
+      console.log("BBBBBBBBBBBBBBBBBBB");
+      render_edge_list_lock = 0;
+    }
   }
 
   function render() {
