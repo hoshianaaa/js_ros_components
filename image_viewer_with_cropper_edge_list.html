@@ -25,6 +25,8 @@
       var EDGE_TH = 110;
       var EDGE_LIST_LOCAL = [];
       var EDGE_LIST_GLOBAL = [];
+      var PEAK_MAX_INDEX = [];
+      var PEAK_MIN_INDEX = [];
 
       var stage = new Konva.Stage({
       container: 'container',
@@ -93,6 +95,27 @@
     EDGE_LIST_LOCAL = message.data;
   });
 
+ peak_max_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "/peak_detection/peak_max_index",
+    messageType : 'std_msgs/Int32MultiArray' 
+  });
+
+  peak_max_sub.subscribe(function(message) {
+    console.log("peak max index:", message.data);
+    PEAK_MAX_INDEX = message.data;
+  });
+
+  peak_min_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "/peak_detection/peak_min_index",
+    messageType : 'std_msgs/Int32MultiArray' 
+  });
+
+  peak_min_sub.subscribe(function(message) {
+    console.log("peak min index:", message.data);
+    PEAK_MIN_INDEX = message.data;
+  });
 
  edge_list_glocal_sub = new ROSLIB.Topic({
     ros : ros,
@@ -178,10 +201,9 @@ sub.on('message', function (topic, message) { // message is Buffer
     ctx.fillRect(x,y,1,1);
   }
 
-  function draw_circle(center_x, center_y, ctx) {
+  function draw_circle(center_x, center_y, ctx, radius=15) {
 
     // 枠線のみ
-    var radius = 15;
     ctx.beginPath();
     ctx.arc(center_x, center_y, radius, 0, Math.PI * 2, true);
     ctx.strokeStyle = 'deepskyblue';
@@ -190,7 +212,7 @@ sub.on('message', function (topic, message) { // message is Buffer
 
   }
 
-  function draw_graph(ctx, points, scaleX, stroke = 'red', width = 2) {
+  function draw_graph(ctx, points, scaleX, emp_indexes, stroke = 'red', width = 2,) {
     // start a new path
     ctx.beginPath();
 
@@ -215,6 +237,17 @@ sub.on('message', function (topic, message) { // message is Buffer
 
     // add stroke to the line 
     ctx.stroke();
+
+    var idxs = emp_indexes;
+    console.log("**** peak ****");
+   
+    for (var i = 0 ; i<idxs.length; i++)
+    {
+      var idx = idxs[i];    
+      var val = points[idx];
+      draw_circle(idx*scaleX, 100 - val*100/255, ctx, 5);
+    }
+
   }
 
   function draw_cross(ctx, center_x, center_y) {
@@ -316,7 +349,7 @@ sub.on('message', function (topic, message) { // message is Buffer
       console.log("size:",d.length);
       console.log("rect size:",size);
 
-      draw_graph(ctx,d,scaleX);
+      draw_graph(ctx,d,scaleX,PEAK_MAX_INDEX);
 
 
       if (EDGE_TH != null)
@@ -328,7 +361,6 @@ sub.on('message', function (topic, message) { // message is Buffer
 
         draw_line(p1,p2,ctx);
       }
-
 /*
       var el = EDGE_LIST_LOCAL;
       if (el.length>0)
