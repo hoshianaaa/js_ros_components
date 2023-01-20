@@ -20,6 +20,9 @@
     <body>
     <script type="text/javascript">
 
+//      var EDGE_TH = null;
+      var EDGE_TH = 110;
+
       var stage = new Konva.Stage({
       container: 'container',
       width: 1000,
@@ -125,6 +128,24 @@ sub.on('message', function (topic, message) { // message is Buffer
     ctx.stroke();
   }
 
+
+  function draw_line(p1, p2, context, color="yellow") {
+
+    context.beginPath () ;
+
+    context.moveTo( p1[0], p1[1] ) ;
+
+    context.lineTo( p2[0], p2[1] )
+
+    context.strokeStyle = color;
+
+    context.lineWidth = 1 ;
+
+    context.stroke() ;
+
+
+  }
+
   function draw_point(x, y, ctx, color='green'){
     ctx.fillStyle = color;
     ctx.fillRect(x,y,1,1);
@@ -226,6 +247,7 @@ sub.on('message', function (topic, message) { // message is Buffer
   }
 
   var render_edge_list_lock = 0;
+
   function render_edge_list(x,y,size, scaleX) {
     if (render_edge_list_lock == 0)
     {
@@ -240,6 +262,18 @@ sub.on('message', function (topic, message) { // message is Buffer
       console.log("rect size:",size);
 
       draw_graph(ctx,d,scaleX);
+
+
+      if (EDGE_TH != null)
+      {
+        var edge_th_in_graph = 100 - EDGE_TH*100/255;
+
+        p1 = [0, edge_th_in_graph];
+        p2 = [size*scaleX, edge_th_in_graph];
+
+        draw_line(p1,p2,ctx);
+      }
+
 /*
       if (d.length>0)
       {
