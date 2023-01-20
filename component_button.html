@@ -17,7 +17,8 @@
   var pub_data_type = "Empty"; // Empty, Bool
   var button_dx = 100;
   var button_dy = 20;
-  var button_color = "#FFFFFF";
+//  var button_color = "#0a458a";
+  var button_color = "gray";
   var mode = "pressed"; // pressed, (pressing)
   var ros = null;
   var pub = null;
@@ -59,7 +60,7 @@
 
         btn.style.width = button_dx + 'px';
         btn.style.height = button_dy + 'px';
-        btn.style.color = button_color;
+        btn.style.backgroundColor = 'gray';
 
         ros = new ROSLIB.Ros();
 
@@ -88,8 +89,8 @@
           data: 1
         });
       }
-
       pub.publish(msg);
+
     }
 
   /*
@@ -104,7 +105,7 @@
 </head>
 
 <body>
-        <button id="button" type=”button” class="rounded-corner" onclick="buttonClick()">button</button>
+  <button id="button" type=”button” class="rounded-corner" onclick="buttonClick()">button</button>
 </body>
 </html>
 
