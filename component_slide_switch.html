@@ -16,6 +16,15 @@
 </body>
 
 <style>
+
+/*
+
+https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/lineCap
+
+*/
+
+/* big */
+/*
 .container {
   position: absolute;
   left: 725px;
@@ -48,6 +57,43 @@
 .toggle-btn.active > .inner-circle {
   margin-left: 132px;
 }
+*/
+
+/* small */
+
+.container {
+  position: absolute;
+  left: 725px;
+  top: 743px;
+  transform:translate(-50%, -50%);
+}
+
+.toggle-btn {
+  width: 100px;
+  height: 50px;
+  background: rgb(240, 240, 240);
+  border-radius: 90px;
+  padding: 5px;
+  transition: all 300ms ease-in-out;
+}
+
+.toggle-btn > .inner-circle {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  transition: all 300ms ease-in-out;
+  filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.161));
+}
+
+.toggle-btn.active {
+  background:rgb(55, 248, 168);
+}
+
+.toggle-btn.active > .inner-circle {
+  margin-left: 50px;
+}
+
 </style>
 
 </html>
