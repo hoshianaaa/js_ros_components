@@ -87,7 +87,17 @@
       function render() {
 
         // draggable obj control
+
         box_attrs = box.attrs;
+
+        console.log(box_attrs.y);
+
+        box.x(joy_x);
+        if (box_attrs.y < 55)
+          box.y(55);
+        if (box_attrs.y >375)
+          box.y(375);
+
         box.x(joy_x);
         requestAnimationFrame(render);
 
