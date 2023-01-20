@@ -15,10 +15,13 @@
   </head>
   <body>
   
+    <canvas width="200" height="200" id="sample" style="position:absolute"></canvas>
     <div id="container"></div>
     <script>
 
       var drag_on = 0;
+      var joy_y = 200;
+      var joy_x = 100;
 
       function writeMessage(message) {
       }
@@ -34,8 +37,8 @@
       var layer = new Konva.Layer();
 
       var box = new Konva.Rect({
-        x: 100,
-        y: 100,
+        x: joy_x,
+        y: joy_y,
         offset: [50, 25],
         width: 100,
         height: 50,
@@ -64,12 +67,12 @@
 
       function render() {
       //  attrs = box.attrs;
-        box.x(100);
+        box.x(joy_x);
         requestAnimationFrame(render);
 
         if (drag_on == 0)
         {
-          box.y(100);
+          box.y(joy_y);
         }
 
       }
