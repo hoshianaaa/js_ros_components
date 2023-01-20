@@ -11,9 +11,9 @@
 
   <script type="text/javascript" type="text/javascript">
     var ros = new ROSLIB.Ros();
-    var name = "joystick";
-    var max_linear = 1.0;
-    var max_angular = 1.0;
+    var name = "joy";
+    var max_x = 1.0;
+    var max_y = 1.0;
 
     this.ros.connect('ws://' + location.hostname + ':9090');
 
@@ -47,11 +47,11 @@
       });
 
       manager.on('move', function (event, nipple) {
-        //max_linear = 1.0; // m/s
-        //max_angular = 1.0; // rad/s
+        //max_x = 1.0; // m/s
+        //max_y = 1.0; // rad/s
         max_distance = 75.0; // pixels;
-        linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
-				angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
+        linear_speed = Math.sin(nipple.angle.radian) * max_x * nipple.distance/max_distance;
+				angular_speed = -Math.cos(nipple.angle.radian) * max_y * nipple.distance/max_distance;
       });
 
       manager.on('end', function () {
@@ -74,13 +74,13 @@
       if (p!=null)
         name = p;
 
-      p = params.get("max_lin");
+      p = params.get("max_x");
       if (p!=null)
-        max_linear = p;
+        max_x = p;
 
-      p = params.get("max_ang");
+      p = params.get("max_y");
       if (p!=null)
-        max_angular = p;
+        max_y = p;
 
       cmd_vel_pub = new ROSLIB.Topic({
         ros: ros,
