@@ -278,7 +278,7 @@ sub.on('message', function (topic, message) { // message is Buffer
     ctx.clearRect(0,0,edge_list_canvas.width, edge_list_canvas.height);
     p1 = [10,0];
     p2 = [10,dy];
-    draw_line(p1,p2,ctx);
+
     edge_list_canvas.style.left = String(x) + 'px';
     edge_list_canvas.style.top = String(y) + 'px';
 
@@ -329,6 +329,7 @@ sub.on('message', function (topic, message) { // message is Buffer
         draw_line(p1,p2,ctx);
       }
 
+/*
       var el = EDGE_LIST_LOCAL;
       if (el.length>0)
       {
@@ -342,6 +343,7 @@ sub.on('message', function (topic, message) { // message is Buffer
 
         }
       }
+*/
 
       edge_graph_canvas.style.left = String(x) + 'px';
       edge_graph_canvas.style.top = String(y) + 'px';
