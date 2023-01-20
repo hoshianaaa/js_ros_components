@@ -22,7 +22,8 @@
 
 //      var EDGE_TH = null;
       var EDGE_TH = 110;
-      var EDGE_LIST = [];
+      var EDGE_LIST_LOCAL = [];
+      var EDGE_LIST_GLOBAL = [];
 
       var stage = new Konva.Stage({
       container: 'container',
@@ -80,16 +81,29 @@
     data: ""
   });
 
- edge_list_sub = new ROSLIB.Topic({
+ edge_list_local_sub = new ROSLIB.Topic({
     ros : ros,
-    name : "edge_detection/edge_list",
+    name : "edge_detection/edge_list_local",
     messageType : 'std_msgs/Float32MultiArray' 
   });
 
-  edge_list_sub.subscribe(function(message) {
+  edge_list_local_sub.subscribe(function(message) {
     console.log("edge list sub:",message);
-    EDGE_LIST = message.data;
+    EDGE_LIST_LOCAL = message.data;
   });
+
+
+ edge_list_glocal_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "edge_detection/edge_list_glocal",
+    messageType : 'std_msgs/Float32MultiArray' 
+  });
+
+  edge_list_glocal_sub.subscribe(function(message) {
+    console.log("edge list sub:",message);
+    EDGE_LIST_GLOBAL = message.data;
+  });
+
 
   var json = {
     "area_p1_x": 0,
@@ -266,7 +280,7 @@ sub.on('message', function (topic, message) { // message is Buffer
       render_edge_list_lock = 1;
       //var edge_list_canvas = document.getElementsById("edge_list_canvas");
       console.log("AAAAAAAAAAAAAAAAAAAA");
-      console.log("edge_list:",EDGE_LIST);
+      console.log("edge_list:",EDGE_LIST_LOCAL);
       console.log(edge_list_canvas);
       var ctx = edge_list_canvas.getContext("2d");
       draw_rect(size*scaleX,100,ctx);
