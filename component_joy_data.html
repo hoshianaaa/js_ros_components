@@ -17,13 +17,21 @@
 
     this.ros.connect('ws://' + location.hostname + ':9090');
 
-    var cmd_vel_pub = null;
+    var x_pub = null;
+    var y_pub = null;
 
     move = function (linear, angular) {
+
+      var msg = new ROSLIB.Message({
+        data: angular,
+      });
+      x_pub.publish(msg);
+
       var msg = new ROSLIB.Message({
         data: linear,
       });
-      cmd_vel_pub.publish(msg);
+      y_pub.publish(msg);
+
     }
 
     createJoystick = function () {
@@ -82,11 +90,19 @@
       if (p!=null)
         max_y = p;
 
-      cmd_vel_pub = new ROSLIB.Topic({
+      x_pub = new ROSLIB.Topic({
         ros: ros,
-        name: name + "/data",
+        name: name + "/x",
         messageType: 'std_msgs/Float64'
       });
+
+      y_pub = new ROSLIB.Topic({
+        ros: ros,
+        name: name + "/y",
+        messageType: 'std_msgs/Float64'
+      });
+
+
 
       createJoystick();
     }
