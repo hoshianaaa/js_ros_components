@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="./css/component.css">
+
+<meta charset="utf-8" />
+
+<script src="./build/roslib.js"></script>
+
+<script>
+  // Connecting to ROS
+  // -----------------
+
+  var name = "button";
+  var pub_topic_name = "button/data";
+  var pub_data_type = "Empty"; // Empty, Bool
+  var mode = "pressing"; // pressed
+  var ros = null;
+  var pub = null;
+// --------- get window parameter ---------
+
+
+    window.onload = function() {
+
+        const url = new URL(window.location.href);
+
+        const params = url.searchParams;
+
+        p = params.get("pub_topic_name");
+        if (p!=null)
+          pub_topic_name = p
+
+        p = params.get("pub_data_type");
+        if (p!=null)
+          pub_data_type = p
+
+        p = params.get("name");
+        if (p!=null)
+          name = p
+
+        var btn = document.getElementById('button');
+        btn.innerText = name;
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : pub_topic_name,
+          messageType : 'std_msgs/' + pub_data_type
+        });
+
+    }
+
+
+    var msg = null;
+
+    function buttonClick() {
+
+      if (pub_data_type=="Empty")
+      {
+        msg = new ROSLIB.Message({
+        });
+      }
+      else if (pub_data_type=="Bool")
+      {
+        msg = new ROSLIB.Message({
+          data: 1
+        });
+      }
+
+      pub.publish(msg);
+    }
+
+  function render() {
+    requestAnimationFrame(render);
+  }
+
+  render();
+
+</script>
+</head>
+
+<body>
+        <button id="button" type=”button” class="rounded-corner" onclick="buttonClick()">button</button>
+</body>
+</html>
+
