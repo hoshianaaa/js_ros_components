@@ -22,6 +22,7 @@
 
 //      var EDGE_TH = null;
       var EDGE_TH = 110;
+      var EDGE_LIST = [];
 
       var stage = new Konva.Stage({
       container: 'container',
@@ -79,6 +80,17 @@
     data: ""
   });
 
+ edge_list_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "edge_detection/edge_list",
+    messageType : 'std_msgs/Float32MultiArray' 
+  });
+
+  edge_list_sub.subscribe(function(message) {
+    console.log("edge list sub:",message);
+    EDGE_LIST = message.data;
+  });
+
   var json = {
     "area_p1_x": 0,
     "area_p1_y": 0,
@@ -86,8 +98,8 @@
     "area_p2_y": 0,
   }
 
-  let sub = mqtt.connect('ws://localhost:8883');
-let topic = "/edge_detection/edge_list"
+let sub = mqtt.connect('ws://localhost:8883');
+let topic = "/edge_detection/edge_graph"
 
 var data_list = [];
 
@@ -254,6 +266,7 @@ sub.on('message', function (topic, message) { // message is Buffer
       render_edge_list_lock = 1;
       //var edge_list_canvas = document.getElementsById("edge_list_canvas");
       console.log("AAAAAAAAAAAAAAAAAAAA");
+      console.log("edge_list:",EDGE_LIST);
       console.log(edge_list_canvas);
       var ctx = edge_list_canvas.getContext("2d");
       draw_rect(size*scaleX,100,ctx);
