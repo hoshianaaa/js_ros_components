@@ -15,11 +15,9 @@
   </head>
   <body>
   
-  <input type="button" value="button" onclick="buttonClick()">
     <div id="container"></div>
     <script>
       function writeMessage(message) {
-        text.text(message);
       }
       var width = window.innerWidth;
       var height = window.innerHeight;
@@ -31,28 +29,6 @@
       });
 
       var layer = new Konva.Layer();
-
-      var text = new Konva.Text({
-        x: 10,
-        y: 10,
-        fontFamily: 'Calibri',
-        fontSize: 24,
-        text: '',
-        fill: 'black',
-      });
-
-      var circle = new Konva.Circle({
-        radius: 10,
-        fill: 'red',
-        stroke: 'black',
-        strokeWidth: 1,
-        draggable: true,
-       // opacity= 0.5,
-       opacity: 0.5,
-        x: 300,
-        y: 300,
-
-      });
 
       var box = new Konva.Rect({
         x: 20,
@@ -68,9 +44,6 @@
       });
 
 
-      var box2 = 
-
-
       // write out drag and drop events
       box.on('dragstart', function () {
         writeMessage('dragstart');
@@ -80,27 +53,9 @@
       });
 
         // add the layer to the stage
-       layer.add(text);
       layer.add(box);
-      layer.add(circle);
 
        stage.add(layer);
-
-      function buttonClick(){
-        console.log("a");
-      layer.add(new Konva.Rect({
-        x: 20,
-        y: 80,
-        offset: [50, 25],
-        width: 100,
-        height: 50,
-        fill: '#00D2FF',
-        stroke: 'black',
-        strokeWidth: 1,
-        draggable: true,
-        opacity: 0.5,
-      }));
-      }
 
     </script>
   </body>
