@@ -2,6 +2,7 @@
 <html>
   <head>
     <script src="./build/konva.js"></script>
+    <script src="./build/roslib.js"></script>
     <meta charset="utf-8" />
     <title>Konva Drag Events Demo</title>
     <style>
@@ -24,6 +25,59 @@
       var joy_x = 100;
       var box_dx = 100;
       var box_dy = 50;
+      var default_value = 0;
+      var slider_min_val = -1.0;
+      var slider_max_val = 1.0;
+      var slider_step = 0.01;
+
+      var ros = null;
+      var pub = null;
+
+      // parameter
+      var topic_name = "lever/value";
+      var data_type = "Float64";
+
+      var msg = new ROSLIB.Message({
+        data: 33.333
+      });
+
+      window.onload = function() {
+
+          const url = new URL(window.location.href);
+
+          const params = url.searchParams;
+
+          p = params.get("topic_name");
+          if (p!=null)
+            topic_name = p;
+
+          p = params.get("slider_min_val");
+          if (p!=null)
+            slider_min_val = p;
+
+          p = params.get("slider_max_val");
+          if (p!=null)
+            slider_max_val = p;
+          
+          p = params.get("default_value");
+          if (p!=null)
+            default_value = p;
+
+          p = params.get("slider_step");
+          if (p!=null)
+            slider_step = p;
+
+          ros = new ROSLIB.Ros();
+
+          ros.connect('ws://localhost:9090');
+
+          pub = new ROSLIB.Topic({
+            ros : ros,
+            name : topic_name,
+            messageType : 'std_msgs/' + data_type
+          });
+
+      }
 
 
       function draw_line(p1, p2, context, color="gray") {
@@ -95,8 +149,8 @@
         box.x(joy_x);
         if (box_attrs.y < 55)
           box.y(55);
-        if (box_attrs.y >375)
-          box.y(375);
+        if (box_attrs.y >345)
+          box.y(345);
 
         box.x(joy_x);
         requestAnimationFrame(render);
@@ -106,6 +160,13 @@
           box.y(joy_y);
         }
 
+        y_val_pix = box_attrs.y;
+        y_val =  - (y_val_pix - 200) / (200 - 55)
+
+        msg.data = Number(y_val);
+        if (pub!=null)
+          pub.publish(msg);
+
         // draw canvas
 
         var element = document.getElementById('sample');
@@ -114,8 +175,8 @@
 
         ctx.clearRect(0, 0, element.width, element.height);
 
-        var p1 = [100 + box_dx/2 ,50 + box_dy/2];
-        var p2 = [100 + box_dx/2 ,350 + box_dy];
+        var p1 = [100 + box_dx/2 ,55 + box_dy/2];
+        var p2 = [100 + box_dx/2 ,345 + box_dy/2];
         draw_line(p1, p2, ctx, color="gray");
 
       }
