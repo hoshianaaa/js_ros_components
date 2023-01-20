@@ -6,13 +6,15 @@
   <title>Robot Controller</title>
   <link rel="stylesheet" href="style.css">
   <script src="./build/roslib.js"></script>
-  <script src="script.js" defer></script>
+  <!--script src="script.js" defer></script-->
   <script>
 
-    var pub_topic_name = "data";
-    var pub_data_type = "Float64";
+    var pub_topic_name = "slide_swtch/on";
+    var pub_data_type = "Bool";
     var ros = null;
     var pub = null;
+
+    var button_active = false;
 
     window.onload = function() {
 
@@ -48,15 +50,31 @@
     }
 
     var msg = new ROSLIB.Message({
-      data: 33.333
+      data: false
     });
 
     function buttonClick(data) {
-      msg.data = 11.111;
-      pub.publish(msg);
       console.log(data);
       console.log(data.length);
+
+      if (data.length>1)
+        button_active = true;
+      else
+        button_active = false;
+
     }
+
+    function render() {
+
+      msg.data = button_active;
+      if (pub!=null)
+        pub.publish(msg);
+      requestAnimationFrame(render);
+      console.log(msg);
+
+    }
+
+    render();
 
   </script>
 </head>
