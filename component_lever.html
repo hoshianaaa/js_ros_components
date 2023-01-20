@@ -15,13 +15,15 @@
   </head>
   <body>
   
-    <canvas width="200" height="200" id="sample" style="position:absolute"></canvas>
+    <canvas width="200" height="400" id="sample" style="position:absolute"></canvas>
     <div id="container"></div>
     <script>
 
       var drag_on = 0;
       var joy_y = 200;
       var joy_x = 100;
+      var box_dx = 100;
+      var box_dy = 50;
 
 
       function draw_line(p1, p2, context, color="gray") {
@@ -34,7 +36,7 @@
 
         context.strokeStyle = color;
 
-        context.lineWidth = 2 ;
+        context.lineWidth = 20 ;
 
         context.stroke() ;
 
@@ -57,13 +59,13 @@
         x: joy_x,
         y: joy_y,
         offset: [50, 25],
-        width: 100,
-        height: 50,
+        width: box_dx,
+        height: box_dy,
         fill: 'black',
         stroke: 'black',
         strokeWidth: 1,
         draggable: true,
-        opacity: 0.5,
+        opacity: 1.0,
       });
 
 
@@ -85,7 +87,7 @@
       function render() {
 
         // draggable obj control
-        //  attrs = box.attrs;
+        box_attrs = box.attrs;
         box.x(joy_x);
         requestAnimationFrame(render);
 
@@ -102,9 +104,9 @@
 
         ctx.clearRect(0, 0, element.width, element.height);
 
-        var p1 = [100,0];
-        var p2 = [100,400];
-        draw_line(p1, p2, context, color="gray") {
+        var p1 = [100 + box_dx/2 ,50 + box_dy/2];
+        var p2 = [100 + box_dx/2 ,350 + box_dy];
+        draw_line(p1, p2, ctx, color="gray");
 
       }
 
