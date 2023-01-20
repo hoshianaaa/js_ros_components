@@ -15,7 +15,10 @@
   var name = "button";
   var pub_topic_name = "button/data";
   var pub_data_type = "Empty"; // Empty, Bool
-  var mode = "pressing"; // pressed
+  var button_dx = 100;
+  var button_dy = 20;
+  var button_color = "#FFFFFF";
+  var mode = "pressed"; // pressed, (pressing)
   var ros = null;
   var pub = null;
 // --------- get window parameter ---------
@@ -39,8 +42,24 @@
         if (p!=null)
           name = p
 
+        p = params.get("button_dx");
+        if (p!=null)
+          button_dx = p
+
+        p = params.get("button_dy");
+        if (p!=null)
+          button_dy = p
+
+        p = params.get("button_color");
+        if (p!=null)
+          button_color = p
+
         var btn = document.getElementById('button');
         btn.innerText = name;
+
+        btn.style.width = button_dx + 'px';
+        btn.style.height = button_dy + 'px';
+        btn.style.color = button_color;
 
         ros = new ROSLIB.Ros();
 
@@ -53,7 +72,6 @@
         });
 
     }
-
 
     var msg = null;
 
@@ -74,11 +92,13 @@
       pub.publish(msg);
     }
 
+  /*
   function render() {
     requestAnimationFrame(render);
   }
 
   render();
+  */
 
 </script>
 </head>
