@@ -14,7 +14,7 @@
       </head>
 
       <canvas style="position:absolute; top:0px" id="canvas" width="1000" height="800" ></canvas>
-      <canvas style="position:absolute; top:100px" id="edge_list_canvas" width="1000" height="100" ></canvas>
+      <canvas style="position:absolute; top:100px" id="edge_graph_canvas" width="1000" height="100" ></canvas>
       <div style="position:absolute; top:0px" id="container"></div>
 
     <body>
@@ -144,11 +144,11 @@ sub.on('message', function (topic, message) { // message is Buffer
 
   //const canvas = document.getElementById("canvas");
   var canvas = document.getElementsByTagName("canvas")[0];
-  const edge_list_canvas = document.getElementById("edge_list_canvas");
+  const edge_graph_canvas = document.getElementById("edge_graph_canvas");
 
 //  https://developer.mozilla.org/ja/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
   function draw_rect(dx, dy, ctx){
-    ctx.clearRect(0,0,edge_list_canvas.width, edge_list_canvas.height);
+    ctx.clearRect(0,0,edge_graph_canvas.width, edge_graph_canvas.height);
     ctx.strokeStyle = 'deepskyblue';
     ctx.strokeRect(0,0,dx,dy);
     ctx.stroke();
@@ -278,12 +278,12 @@ sub.on('message', function (topic, message) { // message is Buffer
     if (render_edge_list_lock == 0)
     {
       render_edge_list_lock = 1;
-      //var edge_list_canvas = document.getElementsById("edge_list_canvas");
+      //var edge_graph_canvas = document.getElementsById("edge_graph_canvas");
       var graph_heigth = 100;
       console.log("AAAAAAAAAAAAAAAAAAAA");
       console.log("edge_list:",EDGE_LIST_LOCAL);
-      console.log(edge_list_canvas);
-      var ctx = edge_list_canvas.getContext("2d");
+      console.log(edge_graph_canvas);
+      var ctx = edge_graph_canvas.getContext("2d");
       draw_rect(size*scaleX,graph_heigth,ctx);
       var d = data_list;
       console.log("size:",d.length);
@@ -316,8 +316,8 @@ sub.on('message', function (topic, message) { // message is Buffer
         }
       }
 
-      edge_list_canvas.style.left = String(x) + 'px';
-      edge_list_canvas.style.top = String(y) + 'px';
+      edge_graph_canvas.style.left = String(x) + 'px';
+      edge_graph_canvas.style.top = String(y) + 'px';
       console.log("BBBBBBBBBBBBBBBBBBB");
       render_edge_list_lock = 0;
     }
