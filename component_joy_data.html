@@ -11,16 +11,13 @@
 
   <script type="text/javascript" type="text/javascript">
     var ros = new ROSLIB.Ros();
+    var name = "joystick";
     var max_linear = 1.0;
     var max_angular = 1.0;
 
     this.ros.connect('ws://' + location.hostname + ':9090');
 
-    cmd_vel_pub = new ROSLIB.Topic({
-      ros: ros,
-      name: "/data",
-      messageType: 'std_msgs/Float64'
-    });
+    var cmd_vel_pub = null;
 
     move = function (linear, angular) {
       var msg = new ROSLIB.Message({
@@ -72,12 +69,24 @@
       const params = url.searchParams;
 
       // パラメータから「username」を取得
+
+      p = params.get("name");
+      if (p!=null)
+        name = p;
+
       p = params.get("max_lin");
       if (p!=null)
         max_linear = p;
 
       p = params.get("max_ang");
+      if (p!=null)
         max_angular = p;
+
+      cmd_vel_pub = new ROSLIB.Topic({
+        ros: ros,
+        name: name + "/data",
+        messageType: 'std_msgs/Float64'
+      });
 
       createJoystick();
     }
