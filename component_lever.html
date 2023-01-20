@@ -17,6 +17,9 @@
   
     <div id="container"></div>
     <script>
+
+      var drag_on = 0;
+
       function writeMessage(message) {
       }
       var width = window.innerWidth;
@@ -46,16 +49,32 @@
 
       // write out drag and drop events
       box.on('dragstart', function () {
+        drag_on = 1;
         writeMessage('dragstart');
+
       });
       box.on('dragend', function () {
+        drag_on = 0;
         writeMessage('dragend');
       });
-
         // add the layer to the stage
       layer.add(box);
 
-       stage.add(layer);
+      stage.add(layer);
+
+      function render() {
+      //  attrs = box.attrs;
+        box.x(100);
+        requestAnimationFrame(render);
+
+        if (drag_on == 0)
+        {
+          box.y(100);
+        }
+
+      }
+
+      render();
 
     </script>
   </body>
