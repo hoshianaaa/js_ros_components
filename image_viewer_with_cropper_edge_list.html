@@ -308,8 +308,8 @@ sub.on('message', function (topic, message) { // message is Buffer
         for (var i=0;i<el.length;i++)
         {
 
-         p1 = [el[i],0];
-         p2 = [el[i],graph_heigth];
+         p1 = [el[i]*scaleX,0];
+         p2 = [el[i]*scaleX,graph_heigth];
 
          draw_line(p1,p2,ctx);
 
