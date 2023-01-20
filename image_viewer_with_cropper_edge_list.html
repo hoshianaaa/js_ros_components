@@ -279,11 +279,12 @@ sub.on('message', function (topic, message) { // message is Buffer
     {
       render_edge_list_lock = 1;
       //var edge_list_canvas = document.getElementsById("edge_list_canvas");
+      var graph_heigth = 100;
       console.log("AAAAAAAAAAAAAAAAAAAA");
       console.log("edge_list:",EDGE_LIST_LOCAL);
       console.log(edge_list_canvas);
       var ctx = edge_list_canvas.getContext("2d");
-      draw_rect(size*scaleX,100,ctx);
+      draw_rect(size*scaleX,graph_heigth,ctx);
       var d = data_list;
       console.log("size:",d.length);
       console.log("rect size:",size);
@@ -293,7 +294,7 @@ sub.on('message', function (topic, message) { // message is Buffer
 
       if (EDGE_TH != null)
       {
-        var edge_th_in_graph = 100 - EDGE_TH*100/255;
+        var edge_th_in_graph = graph_heigth - EDGE_TH*graph_heigth/255;
 
         p1 = [0, edge_th_in_graph];
         p2 = [size*scaleX, edge_th_in_graph];
@@ -301,19 +302,20 @@ sub.on('message', function (topic, message) { // message is Buffer
         draw_line(p1,p2,ctx);
       }
 
-/*
-      if (d.length>0)
+      var el = EDGE_LIST_LOCAL;
+      if (el.length>0)
       {
-        for (var i=0;i<d.length;i++)
+        for (var i=0;i<el.length;i++)
         {
-          console.log(d[i]);
-          draw_point(i, d[i]/3, ctx, "red");
+
+         p1 = [el[i],0];
+         p2 = [el[i],graph_heigth];
+
+         draw_line(p1,p2,ctx);
+
         }
       }
 
-*/
-  //    edge_list_canvas.width = size+10;
-  //    edge_list_canvas.height = 100+10;
       edge_list_canvas.style.left = String(x) + 'px';
       edge_list_canvas.style.top = String(y) + 'px';
       console.log("BBBBBBBBBBBBBBBBBBB");
