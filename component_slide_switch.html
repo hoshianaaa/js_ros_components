@@ -5,14 +5,67 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Robot Controller</title>
   <link rel="stylesheet" href="style.css">
+  <script src="./build/roslib.js"></script>
   <script src="script.js" defer></script>
+  <script>
+
+    var pub_topic_name = "data";
+    var pub_data_type = "Float64";
+    var ros = null;
+    var pub = null;
+
+    window.onload = function() {
+
+        const url = new URL(window.location.href);
+
+        const params = url.searchParams;
+
+        p = params.get("pub_topic_name");
+        if (p!=null)
+          pub_topic_name = p
+
+        p = params.get("sub_topic_name");
+        if (p!=null)
+          sub_topic_name = p
+
+        p = params.get("pub_data_type");
+        if (p!=null)
+          pub_data_type = p
+
+        p = params.get("sub_data_type");
+        if (p!=null)
+          sub_data_type = p
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : pub_topic_name,
+          messageType : 'std_msgs/' + pub_data_type
+        });
+    }
+
+    var msg = new ROSLIB.Message({
+      data: 33.333
+    });
+
+    function buttonClick(data) {
+      msg.data = 11.111;
+      pub.publish(msg);
+      console.log(data);
+      console.log(data.length);
+    }
+
+  </script>
 </head>
-<body>
-    <div class="container">
-      <div class="toggle-btn" id="btn_fast_slow" onclick="this.classList.toggle('active')">
-        <div class="inner-circle"></div>
-      </div>
+<body>jj
+  <div class="container">
+    <div class="toggle-btn" id="btn_fast_slow" onclick="this.classList.toggle('active');buttonClick(this.classList)">
+      <div class="inner-circle"></div>
     </div>
+  </div>
 </body>
 
 <style>
