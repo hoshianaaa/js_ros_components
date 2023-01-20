@@ -46,10 +46,13 @@
   display: inline-block;
   padding: 0.5em 1em;
   text-decoration: none;
-  background: #668ad8;/*ボタン色*/
+#  background: #668ad8;/*ボタン色*/
+  background: lightgray;/*ボタン色*/
   color: #FFF;
-  border-bottom: solid 4px #627295;
-  border-radius: 3px;
+ border-style: none;
+# border-bottom: solid 4px #627295;
+ border-bottom: solid 4px gray;
+  border-radius: 10px;
 }
 .btn-square-shadow:active {
   /*ボタンを押したとき*/
