@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Robot Controller</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+      <div class="toggle-btn" id="btn_fast_slow" onclick="this.classList.toggle('active')">
+        <div class="inner-circle"></div>
+      </div>
+    </div>
+</body>
+
+<style>
+.container {
+  position: absolute;
+  left: 725px;
+  top: 743px;
+  transform:translate(-50%, -50%);
+}
+
+.toggle-btn {
+  width: 230px;
+  height: 100px;
+  background: rgb(240, 240, 240);
+  border-radius: 90px;
+  padding: 5px;
+  transition: all 300ms ease-in-out;
+}
+
+.toggle-btn > .inner-circle {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 50%;
+  transition: all 300ms ease-in-out;
+  filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.161));
+}
+
+.toggle-btn.active {
+  background:rgb(55, 248, 168);
+}
+
+.toggle-btn.active > .inner-circle {
+  margin-left: 132px;
+}
+</style>
+
+</html>
