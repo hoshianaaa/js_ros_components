@@ -166,7 +166,7 @@ sub.on('message', function (topic, message) { // message is Buffer
 
     context.strokeStyle = color;
 
-    context.lineWidth = 1 ;
+    context.lineWidth = 2 ;
 
     context.stroke() ;
 
@@ -291,7 +291,7 @@ sub.on('message', function (topic, message) { // message is Buffer
        p1 = [el[i]*scaleX,0];
        p2 = [el[i]*scaleX,dy];
 
-       draw_line(p1,p2,ctx);
+       draw_line(p1,p2,ctx,"lime");
 
       }
     }
