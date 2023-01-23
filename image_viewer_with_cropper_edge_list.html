@@ -84,6 +84,23 @@
     data: ""
   });
 
+
+ sensitivity_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "/peak_detection/sensitivity_state",
+    messageType : 'std_msgs/Float64' 
+  });
+
+  sensitivity_sub.subscribe(function(message) {
+
+    console.log("fffffffffffffffffffffffffffffF");
+
+
+    EDGE_TH = Number(message.data) * 255 / 100;
+    console.log(EDGE_TH);
+
+  });
+
  edge_list_local_sub = new ROSLIB.Topic({
     ros : ros,
     name : "edge_detection/edge_list_local",
