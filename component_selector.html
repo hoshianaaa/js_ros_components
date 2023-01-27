@@ -50,6 +50,9 @@
           messageType : 'std_msgs/String'
         });
 
+
+        var subed_sub_list = false;
+
         sub = new ROSLIB.Topic({
           ros : ros,
           name : sub_topic_name,
@@ -57,7 +60,18 @@
         });
 
         sub.subscribe(function(message) {
-//          listener.unsubscribe();
+          console.log(message);
+          if (subed_sub_list == true)
+          {
+            var select_value = message.data;
+            var sel = document.getElementById('select');
+            for (var i=0;i<sel.options.length;i++)
+            {
+              if (sel.options[i].value == select_value)
+                sel.options[i].selected = true;
+            }
+            sub.unsubscribe();
+          }
         });
 
         sub_list = new ROSLIB.Topic({
@@ -79,6 +93,7 @@
             sel.add(opt, null);
           }
           sub_list.unsubscribe();
+          subed_sub_list = true;
         });
 
 
