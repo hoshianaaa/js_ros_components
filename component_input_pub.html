@@ -60,13 +60,43 @@
           messageType : 'std_msgs/' + data_type
         });
 
-        }
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : topic_name + "_state",
+          messageType : 'std_msgs/' + data_type
+        });
+
+        sub.subscribe(function(message) {
+
+          var data = message.data;
+          if (message.data == null)
+          {
+
+          }
+          else
+          {
+            set_input_val(data)
+          }
+
+          sub.unsubscribe();
+        });
+
+    }
 
 // -------------------------------------------
 
     var msg = new ROSLIB.Message({
       data: 0.0
     });
+
+
+    function set_input_val(val) {
+
+      var input = document.getElementById("input");
+      input.value = Number(val);
+
+    }
+
 
     function pub_input_val() {
 
