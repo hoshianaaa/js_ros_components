@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="./css/component.css">
+
+<meta charset="utf-8" />
+
+<script src="./build/roslib.js"></script>
+
+<script>
+  // Connecting to ROS
+  // -----------------
+
+  
+  var name = "sample/mode"
+
+  var pub_topic_name = name;
+  var pub_data_type = "String";
+
+  var sub_topic_name = name + "_state";
+  var sub_data_type = "String";
+
+  var sub_list_topic_name = name + "_list";
+  var sub_list_data_type = "String";
+
+  var ros = null;
+  var pub = null;
+  var sub = null;
+  var sub_list = null;
+
+// --------- get window parameter ---------
+
+    window.onload = function() {
+
+        const url = new URL(window.location.href);
+
+        const params = url.searchParams;
+
+        p = params.get("name");
+        if (p!=null)
+          name = p
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : pub_topic_name,
+          messageType : 'std_msgs/' + pub_data_type
+        });
+
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : sub_topic_name,
+          messageType : 'std_msgs/' + sub_data_type
+        });
+
+        sub.subscribe(function(message) {
+//          listener.unsubscribe();
+        });
+
+        sub_list = new ROSLIB.Topic({
+          ros : ros,
+          name : sub_list_topic_name,
+          messageType : 'std_msgs/' + sub_data_type
+        });
+
+        sub_list.subscribe(function(message) {
+//          listener.unsubscribe();
+        });
+
+
+    }
+
+
+    var msg = new ROSLIB.Message({
+      data: ""
+    });
+
+    function buttonClick() {
+      msg.data = "mode1";
+      pub.publish(msg);
+    }
+
+
+
+</script>
+</head>
+
+<body>
+
+		<select size="1" name="sample">
+			<option value="sample">サンプル1</option>
+			<option value="sample">サンプル2</option>
+			<option value="sample">サンプル3</option>
+			<option value="sample">サンプル4</option>
+			<option value="sample">サンプル5</option>
+		</select>
+
+</body>
+</html>
+
