@@ -99,17 +99,54 @@
 
     }
 
-
     var msg = new ROSLIB.Message({
       data: ""
     });
 
-    function buttonClick() {
-      msg.data = "mode1";
-      pub.publish(msg);
-    }
+
+// timer callback: https://hakuhin.jp/js/timer.html
+function TimerInterval(callback,delay){
+
+	var _timeout_id = null;
+
+	// ------------------------------------------------------------
+	// タイマーを停止
+	// ------------------------------------------------------------
+	this.stop = function (){
+		if(_timeout_id !== null){
+			clearTimeout(_timeout_id);
+			_timeout_id = null;
+		}
+	};
+
+	// ------------------------------------------------------------
+	// 初期化
+	// ------------------------------------------------------------
+	_timeout_id = setTimeout(function callee(){
+		callback();
+		if(_timeout_id === null) return;
+		_timeout_id = setTimeout(callee,delay);
+	},delay);
+}
 
 
+// ------------------------------------------------------------
+// 1000 ミリ秒の時間隔で繰り返し実行
+// ------------------------------------------------------------
+var timer = new TimerInterval(function (){
+
+  var sel = document.getElementById('select');
+  for (var i=0;i<sel.options.length;i++)
+  {
+      if(sel.options[i].selected == true)
+      {
+        var txt = sel.options[i].value;
+        msg.data = txt;
+        pub.publish(msg);
+      }
+  }
+  
+} , 100);
 
 </script>
 </head>
