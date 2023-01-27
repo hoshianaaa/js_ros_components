@@ -13,16 +13,11 @@
   // -----------------
 
   
-  var name = "sample/mode"
+  var name = "/sample/mode"
 
   var pub_topic_name = name;
-  var pub_data_type = "String";
-
   var sub_topic_name = name + "_state";
-  var sub_data_type = "String";
-
   var sub_list_topic_name = name + "_list";
-  var sub_list_data_type = "String";
 
   var ros = null;
   var pub = null;
@@ -39,7 +34,11 @@
 
         p = params.get("name");
         if (p!=null)
+        {
           name = p
+          sub_topic_name = name + "_state";
+          sub_list_topic_name = name + "_list";
+        }
 
         ros = new ROSLIB.Ros();
 
@@ -48,13 +47,13 @@
         pub = new ROSLIB.Topic({
           ros : ros,
           name : pub_topic_name,
-          messageType : 'std_msgs/' + pub_data_type
+          messageType : 'std_msgs/String'
         });
 
         sub = new ROSLIB.Topic({
           ros : ros,
           name : sub_topic_name,
-          messageType : 'std_msgs/' + sub_data_type
+          messageType : 'std_msgs/String'
         });
 
         sub.subscribe(function(message) {
@@ -64,11 +63,22 @@
         sub_list = new ROSLIB.Topic({
           ros : ros,
           name : sub_list_topic_name,
-          messageType : 'std_msgs/' + sub_data_type
+          messageType : 'std_msgs/String'
         });
 
         sub_list.subscribe(function(message) {
-//          listener.unsubscribe();
+          console.log("list:",message);
+          msg_list = message.data.split(',');
+          console.log("list:",msg_list);
+          var sel = document.getElementById('select');
+          for (var i=0;i<msg_list.length;i++)
+          {
+            var opt = document.createElement("option");
+            opt.value=msg_list[i];
+            opt.text=msg_list[i];
+            sel.add(opt, null);
+          }
+          sub_list.unsubscribe();
         });
 
 
@@ -91,12 +101,7 @@
 
 <body>
 
-		<select size="1" name="sample">
-			<option value="sample">サンプル1</option>
-			<option value="sample">サンプル2</option>
-			<option value="sample">サンプル3</option>
-			<option value="sample">サンプル4</option>
-			<option value="sample">サンプル5</option>
+		<select id="select" size="1" name="sample">
 		</select>
 
 </body>
