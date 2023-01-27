@@ -40,6 +40,13 @@
           sub_list_topic_name = name + "_list";
         }
 
+        p = params.get("text");
+        if (p!=null)
+        {
+          var out_frame = document.getElementById("output");
+          out_frame.innerText = name;
+        }
+
         ros = new ROSLIB.Ros();
 
         ros.connect('ws://localhost:9090');
@@ -153,8 +160,9 @@ var timer = new TimerInterval(function (){
 
 <body>
 
-		<select id="select" size="1" name="sample" class="cp_ipselect cp_sl01">
-		</select>
+      <a id="output"></a>
+      <select id="select" size="1" name="sample" class="cp_ipselect cp_sl01">
+      </select>
 
 </body>
 </html>
