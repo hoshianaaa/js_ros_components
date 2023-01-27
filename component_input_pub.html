@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="./css/component.css">
+
+    <meta charset="utf-8" />
+    <title></title>
+
+<script src="./build/roslib.js"></script>
+
+  <script>
+
+    var topic_name = "data";
+    var input_step = 0.01;
+    var name = "value";
+    var ros = null;
+    var pub = null;
+    var data_type = "Float64";
+
+// --------- get window parameter ---------
+
+    window.onload = function() {
+        // URLを取得
+        const url = new URL(window.location.href);
+
+        // URLSearchParamsオブジェクトを取得
+        const params = url.searchParams;
+
+        // パラメータから「username」を取得
+        p = params.get("topic_name");
+        if (p!=null)
+          topic_name = p;
+
+        p = params.get("input_step");
+        if (p!=null)
+          input_step = p;
+        p = params.get("name");
+        if (p!=null)
+        {
+          name = p;
+          var out_frame = document.getElementById("output");
+          out_frame.innerText = name;
+        }
+        p = params.get("data_type");
+        if (p!=null)
+          data_type = p;
+
+        input = document.getElementById("input");
+        input.step = input_step;
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : topic_name,
+          //messageType : 'geometry_msgs/Twist'
+          messageType : 'std_msgs/' + data_type
+        });
+
+        }
+
+// -------------------------------------------
+
+    var msg = new ROSLIB.Message({
+      data: 0.0
+    });
+
+    function pub_input_val() {
+
+      var input = document.getElementById("input");
+      msg.data = Number(input.value);
+      pub.publish(msg);
+
+    }
+
+// timer callback: https://hakuhin.jp/js/timer.html
+function TimerInterval(callback,delay){
+
+	var _timeout_id = null;
+
+	// ------------------------------------------------------------
+	// タイマーを停止
+	// ------------------------------------------------------------
+	this.stop = function (){
+		if(_timeout_id !== null){
+			clearTimeout(_timeout_id);
+			_timeout_id = null;
+		}
+	};
+
+	// ------------------------------------------------------------
+	// 初期化
+	// ------------------------------------------------------------
+	_timeout_id = setTimeout(function callee(){
+		callback();
+		if(_timeout_id === null) return;
+		_timeout_id = setTimeout(callee,delay);
+	},delay);
+}
+
+
+// ------------------------------------------------------------
+// 1000 ミリ秒の時間隔で繰り返し実行
+// ------------------------------------------------------------
+var timer = new TimerInterval(function (){
+
+  pub_input_val();
+
+} , 100);
+
+
+
+  </script>
+</head>
+<body>
+  <input type="number" id="input" name="input" step="0.01" oninput="change_input();">
+</body>
+</html>
+
