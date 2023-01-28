@@ -168,6 +168,12 @@
 
   region_sub.subscribe(function(message) {
     var str = message.data;
+    if (str.length==0)
+    {
+      rect_init = 2;
+      region_sub.unsubscribe();
+      return; 
+    }
     const obj = JSON.parse(str);
     console.log(obj);
     var p1x = obj.area_p1_x;
