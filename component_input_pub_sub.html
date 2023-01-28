@@ -25,6 +25,8 @@
     var ref_value = null;
     var set_data = false;
 
+     var subed = 0;
+
 // --------- get window parameter ---------
 
     window.onload = function() {
@@ -84,8 +86,9 @@
             set_input_val(data)
             set_data = true;
           }
-
           sub.unsubscribe();
+          subed = 1;
+
         });
 
         ref_sub = new ROSLIB.Topic({
@@ -119,9 +122,12 @@
 
     function pub_input_val() {
 
-      var input = document.getElementById("input");
-      msg.data = Number(input.value);
-      pub.publish(msg);
+      if (subed==1)
+      {
+        var input = document.getElementById("input");
+        msg.data = Number(input.value);
+        pub.publish(msg);
+      }
 
     }
 
