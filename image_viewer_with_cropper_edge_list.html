@@ -448,43 +448,13 @@ sub.on('message', function (topic, message) { // message is Buffer
 
   function render() {
 
-    const image = new Image();
-    image.onload = function(){
+      const image = new Image();
+      image.onload = function(){
 
       var ctx = canvas.getContext("2d");
 
       ret = drawImageScaled(image, ctx);
-
-/*
-      for (var i=0;i<detect_points.length;i++)
-      {
-        dp = detect_points[i]; 
-        draw_point(dp.x,dp.y,ctx);
-      }
-*/
-
-      // rect pos
-
-      r1 = rect.attrs;
-      console.log(r1);
-
-      /*
-      console.log(a.x, a.y);
-      console.log(a.width, a.height);
-      console.log(a.rotation);
-      */
-
-      var p1,p2;
-      if (r1.scaleX == null)
-      {
-        p1 = [r1.x, r1.y];
-        p2 = [r1.x + r1.width * 1, r1.y + r1.height * 1];
-      }
-      else
-      {
-        p1 = [r1.x, r1.y];
-        p2 = [r1.x + r1.width * r1.scaleX, r1.y + r1.height * r1.scaleY];
-      }
+ 
 
       if (rect_init == 1)
       {
@@ -492,33 +462,77 @@ sub.on('message', function (topic, message) { // message is Buffer
         var rp1 = pix2web(ret[0], ret[1], ret[2], [def_p1_x, def_p1_y]);
         var rp2 = pix2web(ret[0], ret[1], ret[2], [def_p2_x, def_p2_y]);
         rect_init = 2;
+        rect.x(100);
+        rect.y(200);
+        rect.width(400);
+        rect.height(800);
 
-        r1.x = rp1[0];
-        r1.y = rp1[1];
-        r1.width = rp2[0] - rp1[0];
-        r1.height = rp2[1] - rp1[1];
-        r1.scaleX = 1;
-        r1.scaleY = 1;
+/*
+        //rect.x(rp1[0]);
+        //rect.y(rp1[1]);
+        rect.width = rp2[0] - rp1[0];
+        rect.height = rp2[1] - rp1[1];
+        rect.scaleX = 1;
+        rect.scaleY = 1;
+        */
       }
 
-      p1 = web2pix(ret[0], ret[1], ret[2], p1);
-      p2 = web2pix(ret[0], ret[1], ret[2], p2);
-
-      if ((p1[0] != json["area_p1_x"]) || (p1[1] != json["area_p1_y"]) || (p2[0] != json["area_p2_x"]) || (p2[1] != json["area_p2_y"]))
+      else if (rect_init == 2)
       {
-        json["area_p1_x"] = p1[0];
-        json["area_p1_y"] = p1[1];
-        json["area_p2_x"] = p2[0];
-        json["area_p2_y"] = p2[1];
-        msg.data = JSON.stringify(json);
-        pub.publish(msg);
+
+      
+
+ /*
+        for (var i=0;i<detect_points.length;i++)
+        {
+          dp = detect_points[i]; 
+          draw_point(dp.x,dp.y,ctx);
+        }
+  */
+
+        // rect pos
+
+        r1 = rect.attrs;
+        console.log(r1);
+
+        /*
+        console.log(a.x, a.y);
+        console.log(a.width, a.height);
+        console.log(a.rotation);
+        */
+
+        var p1,p2;
+        if (r1.scaleX == null)
+        {
+          p1 = [r1.x, r1.y];
+          p2 = [r1.x + r1.width * 1, r1.y + r1.height * 1];
+        }
+        else
+        {
+          p1 = [r1.x, r1.y];
+          p2 = [r1.x + r1.width * r1.scaleX, r1.y + r1.height * r1.scaleY];
+        }
+
+        p1 = web2pix(ret[0], ret[1], ret[2], p1);
+        p2 = web2pix(ret[0], ret[1], ret[2], p2);
+
+        if ((p1[0] != json["area_p1_x"]) || (p1[1] != json["area_p1_y"]) || (p2[0] != json["area_p2_x"]) || (p2[1] != json["area_p2_y"]))
+        {
+          json["area_p1_x"] = p1[0];
+          json["area_p1_y"] = p1[1];
+          json["area_p2_x"] = p2[0];
+          json["area_p2_y"] = p2[1];
+          msg.data = JSON.stringify(json);
+          pub.publish(msg);
+        }
+        console.log(p1, p2);
+
+        render_edge_graph(r1.x + 7, r1.y + r1.height * r1.scaleY + 30, p2[0] - p1[0], ret[0]);
+        render_edge_list(r1.x + 7, r1.y, p2[0] - p1[0], ret[0], r1.height * r1.scaleY );
+
       }
-      console.log(p1, p2);
-
-      render_edge_graph(r1.x + 7, r1.y + r1.height * r1.scaleY + 30, p2[0] - p1[0], ret[0]);
-      render_edge_list(r1.x + 7, r1.y, p2[0] - p1[0], ret[0], r1.height * r1.scaleY );
-
     }
+
     // ↓ MJPG-streamerの静止画像をロード
     image.src = "http://localhost:8080/snapshot?topic=/usb_cam/image_raw";
     //console.log(image);
