@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="./css/component.css">
+
+    <meta charset="utf-8" />
+    <title></title>
+
+<script src="./build/roslib.js"></script>
+
+  <script>
+
+    var topic_name = "data";
+//    var ref_sub_topic_name = "ref_data";
+    var ref_sub_topic_name = "/edge_detection/measured";
+    var input_step = 1;
+    var name = "value";
+    var ros = null;
+    var pub = null;
+    var sub = null;
+    var ref_sub = null;
+    var data_type = "Float64";
+
+    var ref_value = null;
+    var set_data = false;
+
+// --------- get window parameter ---------
+
+    window.onload = function() {
+        // URLを取得
+        const url = new URL(window.location.href);
+
+        // URLSearchParamsオブジェクトを取得
+        const params = url.searchParams;
+
+        // パラメータから「username」を取得
+        p = params.get("topic_name");
+        if (p!=null)
+          topic_name = p;
+
+        p = params.get("input_step");
+        if (p!=null)
+          input_step = p;
+        p = params.get("name");
+        if (p!=null)
+        {
+          name = p;
+          var out_frame = document.getElementById("output");
+          out_frame.innerText = name;
+        }
+        p = params.get("data_type");
+        if (p!=null)
+          data_type = p;
+
+        input = document.getElementById("input");
+        input.step = input_step;
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : topic_name,
+          //messageType : 'geometry_msgs/Twist'
+          messageType : 'std_msgs/' + data_type
+        });
+
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : topic_name + "_state",
+          messageType : 'std_msgs/' + data_type
+        });
+
+        sub.subscribe(function(message) {
+
+          var data = message.data;
+          if (message.data == null)
+          {
+          }
+          else
+          {
+            set_input_val(data)
+            set_data = true;
+          }
+
+          sub.unsubscribe();
+        });
+
+        ref_sub = new ROSLIB.Topic({
+          ros : ros,
+          name : ref_sub_topic_name,
+          messageType : 'std_msgs/' + data_type
+        });
+
+        ref_sub.subscribe(function(message) {
+          ref_value = message.data;
+          //ref_sub.unsubscribe();
+        });
+
+
+    }
+
+// -------------------------------------------
+
+    var msg = new ROSLIB.Message({
+      data: 0.0
+    });
+
+
+    function set_input_val(val) {
+
+      var input = document.getElementById("input");
+      input.value = Number(val);
+
+    }
+
+
+    function pub_input_val() {
+
+      var input = document.getElementById("input");
+      msg.data = Number(input.value);
+      pub.publish(msg);
+
+    }
+
+function click_input() {
+  var input = document.getElementById("input");
+  if (set_data == false)
+  {
+    input.value = ref_value;
+    set_data = true;
+  }
+}
+
+// timer callback: https://hakuhin.jp/js/timer.html
+function TimerInterval(callback,delay){
+
+	var _timeout_id = null;
+
+	// ------------------------------------------------------------
+	// タイマーを停止
+	// ------------------------------------------------------------
+	this.stop = function (){
+		if(_timeout_id !== null){
+			clearTimeout(_timeout_id);
+			_timeout_id = null;
+		}
+	};
+
+	// ------------------------------------------------------------
+	// 初期化
+	// ------------------------------------------------------------
+	_timeout_id = setTimeout(function callee(){
+		callback();
+		if(_timeout_id === null) return;
+		_timeout_id = setTimeout(callee,delay);
+	},delay);
+}
+
+
+// ------------------------------------------------------------
+// 1000 ミリ秒の時間隔で繰り返し実行
+// ------------------------------------------------------------
+var timer = new TimerInterval(function (){
+
+  pub_input_val();
+
+} , 100);
+
+
+
+  </script>
+</head>
+<body>
+  <a id="output"></a>
+  <input type="number" id="input" name="input" step="0.01" oninput="change_input();" onclick="click_input();">
+</body>
+</html>
+
