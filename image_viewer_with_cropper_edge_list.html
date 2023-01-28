@@ -462,10 +462,12 @@ sub.on('message', function (topic, message) { // message is Buffer
         var rp1 = pix2web(ret[0], ret[1], ret[2], [def_p1_x, def_p1_y]);
         var rp2 = pix2web(ret[0], ret[1], ret[2], [def_p2_x, def_p2_y]);
         rect_init = 2;
-        rect.x(100);
-        rect.y(200);
-        rect.width(400);
-        rect.height(800);
+        rect.x(rp1[0]);
+        rect.y(rp1[1]);
+        rect.width(rp2[0] - rp1[0]);
+        rect.height(rp2[1] - rp1[1]);
+        rect.scaleX(1);
+        rect.scaleY(1);
 
 /*
         //rect.x(rp1[0]);
@@ -476,7 +478,6 @@ sub.on('message', function (topic, message) { // message is Buffer
         rect.scaleY = 1;
         */
       }
-
       else if (rect_init == 2)
       {
 
