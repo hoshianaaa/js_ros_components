@@ -153,6 +153,37 @@
     "area_p2_y": 0,
   }
 
+
+ region_sub = new ROSLIB.Topic({
+    ros : ros,
+    name : "/params_state",
+    messageType : 'std_msgs/String' 
+  });
+
+  var def_p1_x = null;
+  var def_p1_y = null;
+  var def_p2_x = null;
+  var def_p2_y = null;
+  var rect_init = 0; //0: no set value, 1: set value, 2: finish
+
+  region_sub.subscribe(function(message) {
+    var str = message.data;
+    const obj = JSON.parse(str);
+    console.log(obj);
+    var p1x = obj.area_p1_x;
+    var p1y = obj.area_p1_y;
+    var p2x = obj.area_p2_x;
+    var p2y = obj.area_p2_y;
+    def_p1_x = p1x;
+    def_p1_y = p1y;
+    def_p2_x = p2x;
+    def_p2_y = p2y;
+    rect_init = 1;
+    region_sub.unsubscribe();
+  });
+
+
+
 let sub = mqtt.connect('ws://localhost:8883');
 let topic = "/edge_detection/edge_graph"
 
@@ -323,6 +354,20 @@ sub.on('message', function (topic, message) { // message is Buffer
     return [px, py];
   }
 
+
+  function pix2web(ratio, shift_x, shift_y, p) {
+    var r = ratio;
+    var sx = shift_x;
+    var sy = shift_y;
+
+    px = p[0] * r + sx;
+    py = p[1] * r + sy;
+
+    return [px, py];
+  }
+
+
+
   function render_edge_list(x,y,size, scaleX, dy) {
     var ctx = edge_list_canvas.getContext("2d");
     ctx.clearRect(0,0,edge_list_canvas.width, edge_list_canvas.height);
@@ -441,6 +486,20 @@ sub.on('message', function (topic, message) { // message is Buffer
         p2 = [r1.x + r1.width * r1.scaleX, r1.y + r1.height * r1.scaleY];
       }
 
+      if (rect_init == 1)
+      {
+
+        var rp1 = pix2web(ret[0], ret[1], ret[2], [def_p1_x, def_p1_y]);
+        var rp2 = pix2web(ret[0], ret[1], ret[2], [def_p2_x, def_p2_y]);
+        rect_init = 2;
+
+        r1.x = rp1[0];
+        r1.y = rp1[1];
+        r1.width = rp2[0] - rp1[0];
+        r1.height = rp2[1] - rp1[1];
+        r1.scaleX = 1;
+        r1.scaleY = 1;
+      }
 
       p1 = web2pix(ret[0], ret[1], ret[2], p1);
       p2 = web2pix(ret[0], ret[1], ret[2], p2);
