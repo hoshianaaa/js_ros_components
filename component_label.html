@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="./css/component.css">
+
+<meta charset="utf-8" />
+
+<script src="./build/roslib.js"></script>
+
+<script>
+  // Connecting to ROS
+  // -----------------
+
+  var data_name = "";
+  var pub_topic_name = "data";
+  var sub_topic_name = "state";
+  var ros = null;
+  var pub = null;
+  var sub = null;
+  var data_type = "Float64";
+// --------- get window parameter ---------
+
+    window.onload = function() {
+
+        const url = new URL(window.location.href);
+
+        const params = url.searchParams;
+
+        p = params.get("data_type");
+        if (p!=null)
+          data_type = p;
+
+        pub_topic_name = params.get("pub_topic_name");
+        sub_topic_name = params.get("sub_topic_name");
+        data_name = params.get("data_name");
+
+        document.getElementById("output").innerText = data_name;
+
+        ros = new ROSLIB.Ros();
+
+        ros.connect('ws://localhost:9090');
+
+/*
+        pub = new ROSLIB.Topic({
+          ros : ros,
+          name : pub_topic_name,
+          messageType : 'std_msgs/Float64'
+        });
+        */
+
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : sub_topic_name,
+          messageType : 'std_msgs/' + data_type
+        });
+
+        sub.subscribe(function(message) {
+          /*
+          console.log('Received message on ' + sub.name + ': ' + message.data);
+          var input = document.getElementById("input");
+          input.value = message.data;
+          */
+          var num = message.data;
+          var input = document.getElementById("num");
+          input.innerText = num.toString();
+          var back = document.getElementById("back");
+          if (num > 0)
+          {
+            back.style.backgroundColor = "lime";
+          }
+          else if (num < 0)
+          {
+            back.style.backgroundColor = "red";
+          }
+
+//          listener.unsubscribe();
+        });
+
+    }
+
+/*
+    var msg = new ROSLIB.Message({
+      data: 33.333
+    });
+
+    function buttonClick() {
+      msg.data = 11.111;
+      pub.publish(msg);
+    }
+
+*/
+
+
+</script>
+</head>
+
+<body>
+
+      <!--button type=”button” class="rounded-corner" onclick="buttonClick()">reset</button-->
+      <div id="back">
+        <a id="output"></a>
+        <!--input type="number" id="input" name="input" readonly="readonly"/-->
+        <a id="num"></a>
+      </div>
+</body>
+</html>
+
