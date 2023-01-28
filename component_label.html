@@ -12,6 +12,7 @@
   // Connecting to ROS
   // -----------------
 
+  var name = "";
   var data_name = "";
   var pub_topic_name = "data";
   var sub_topic_name = "state";
@@ -31,11 +32,16 @@
         if (p!=null)
           data_type = p;
 
+        p = params.get("name");
+        if (p!=null)
+          name = p;
+
+
         pub_topic_name = params.get("pub_topic_name");
         sub_topic_name = params.get("sub_topic_name");
         data_name = params.get("data_name");
 
-        document.getElementById("output").innerText = data_name;
+        document.getElementById("output").innerText = name;
 
         ros = new ROSLIB.Ros();
 
@@ -62,8 +68,8 @@
           input.value = message.data;
           */
           var num = message.data;
-          var input = document.getElementById("num");
-          input.innerText = num.toString();
+          //var input = document.getElementById("num");
+          //input.innerText = num.toString();
           var back = document.getElementById("back");
           if (num > 0)
           {
@@ -100,13 +106,12 @@
 </script>
 </head>
 
-<body>
+<body height=100% width=100%>
 
       <!--button type=”button” class="rounded-corner" onclick="buttonClick()">reset</button-->
-      <div id="back">
+      <div id="back" width=100% height=100%>
         <a id="output"></a>
         <!--input type="number" id="input" name="input" readonly="readonly"/-->
-        <a id="num"></a>
       </div>
 </body>
 </html>
