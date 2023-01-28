@@ -101,18 +101,6 @@
 
   });
 
-
- rect_state_sub = new ROSLIB.Topic({
-    ros : ros,
-    name : "/params_state",
-    messageType : 'std_msgs/String' 
-  });
-
-  rect_state_sub.subscribe(function(message) {
-    var rect_state = message.data;
-  });
-
-
  edge_list_local_sub = new ROSLIB.Topic({
     ros : ros,
     name : "edge_detection/edge_list_local",
