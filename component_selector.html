@@ -15,9 +15,7 @@
   
   var name = "/sample/mode"
 
-  var pub_topic_name = name;
-  var sub_topic_name = name + "_state";
-  var sub_list_topic_name = name + "_list";
+  var text = "select";
 
   var ros = null;
   var pub = null;
@@ -26,6 +24,7 @@
 
 // --------- get window parameter ---------
 
+    var subed_sub = false;
     window.onload = function() {
 
         const url = new URL(window.location.href);
@@ -36,16 +35,19 @@
         if (p!=null)
         {
           name = p
-          sub_topic_name = name + "_state";
-          sub_list_topic_name = name + "_list";
         }
+
+        var pub_topic_name = name;
+        var sub_topic_name = name + "_state";
+        var sub_list_topic_name = name + "_list";
 
         p = params.get("text");
         if (p!=null)
         {
-          var out_frame = document.getElementById("output");
-          out_frame.innerText = name;
+          text = p;
         }
+        var out_frame = document.getElementById("output");
+        out_frame.innerText = text;
 
         ros = new ROSLIB.Ros();
 
@@ -78,6 +80,7 @@
                 sel.options[i].selected = true;
             }
             sub.unsubscribe();
+            subed_sub = true;
           }
         });
 
@@ -142,15 +145,18 @@ function TimerInterval(callback,delay){
 // ------------------------------------------------------------
 var timer = new TimerInterval(function (){
 
-  var sel = document.getElementById('select');
-  for (var i=0;i<sel.options.length;i++)
+  if (subed_sub == true)
   {
-      if(sel.options[i].selected == true)
-      {
-        var txt = sel.options[i].value;
-        msg.data = txt;
-        pub.publish(msg);
-      }
+    var sel = document.getElementById('select');
+    for (var i=0;i<sel.options.length;i++)
+    {
+        if(sel.options[i].selected == true)
+        {
+          var txt = sel.options[i].value;
+          msg.data = txt;
+          pub.publish(msg);
+        }
+    }
   }
   
 } , 100);

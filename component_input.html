@@ -56,9 +56,14 @@
         });
 
         sub.subscribe(function(message) {
+          /*
           console.log('Received message on ' + sub.name + ': ' + message.data);
           var input = document.getElementById("input");
           input.value = message.data;
+          */
+          var num = message.data;
+          var input = document.getElementById("num");
+          input.innerText = num.toString();
 
 //          listener.unsubscribe();
         });
@@ -84,7 +89,8 @@
 <body>
       <!--button type=”button” class="rounded-corner" onclick="buttonClick()">reset</button-->
       <a id="output"></a>
-      <input type="number" id="input" name="input" readonly="readonly"/>
+      <!--input type="number" id="input" name="input" readonly="readonly"/-->
+      <a id="num"></a>
 </body>
 </html>
 
