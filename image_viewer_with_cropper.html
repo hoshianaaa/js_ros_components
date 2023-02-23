@@ -242,7 +242,7 @@
 
     }
     // ↓ MJPG-streamerの静止画像をロード
-    image.src = "http://localhost:8080/snapshot?topic=/usb_cam/image_raw";
+    image.src = "http://localhost:8080/snapshot?topic=/usb_cam/last_image_raw";
     //console.log(image);
     requestAnimationFrame(render);
 
