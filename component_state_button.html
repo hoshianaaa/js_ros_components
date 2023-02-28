@@ -13,8 +13,9 @@
   // -----------------
 
   var name = "button";
-  var pub_topic_name = "button/data";
-  var pub_data_type = "Empty"; // Empty, Bool
+  var topic_name = "/image_source/capture_loop";
+  var data_type = "Float64"; // Empty, Bool
+
   var button_dx = 100;
   var button_dy = 20;
 //  var button_color = "#0a458a";
@@ -22,8 +23,11 @@
   var mode = "pressed"; // pressed, (pressing)
   var ros = null;
   var pub = null;
+  var sub = null;
 // --------- get window parameter ---------
 
+  var disable = true;
+  var state = null;
 
     window.onload = function() {
 
@@ -31,13 +35,13 @@
 
         const params = url.searchParams;
 
-        p = params.get("pub_topic_name");
+        p = params.get("topic_name");
         if (p!=null)
-          pub_topic_name = p
+          topic_name = p
 
-        p = params.get("pub_data_type");
+        p = params.get("data_type");
         if (p!=null)
-          pub_data_type = p
+          data_type = p
 
         p = params.get("name");
         if (p!=null)
@@ -56,6 +60,8 @@
           button_color = p
 
         var btn = document.getElementById('button');
+        button.disabled = "disabled";
+
         btn.innerText = name;
 
         btn.style.width = button_dx + 'px';
@@ -68,27 +74,50 @@
 
         pub = new ROSLIB.Topic({
           ros : ros,
-          name : pub_topic_name,
-          messageType : 'std_msgs/' + pub_data_type
+          name : topic_name,
+          messageType : 'std_msgs/' + data_type
         });
 
+        sub = new ROSLIB.Topic({
+          ros : ros,
+          name : topic_name + '_state',
+          messageType : 'std_msgs/' + data_type
+        });
+
+        sub.subscribe(function(message) {
+
+          state = message.data;
+          
+          var btn = document.getElementById("button");
+          if (disable == true)
+          {
+            disable = false;
+            btn.disabled = null;
+          }
+
+          console.log(message);
+          if (message.data != 0 )
+          {
+             btn.style = "background:lime";
+          }
+          else
+          {
+             btn.style = "background:lightgray";
+          }
+//          listener.unsubscribe();
+        });
     }
 
     var msg = null;
 
     function buttonClick() {
 
-      if (pub_data_type=="Empty")
-      {
-        msg = new ROSLIB.Message({
-        });
-      }
-      else if (pub_data_type=="Bool")
-      {
-        msg = new ROSLIB.Message({
-          data: 1
-        });
-      }
+      msg = new ROSLIB.Message({
+        data: 0
+      });
+      if (state == 0)
+        msg.data = 1;
+
       console.log(msg);
       pub.publish(msg);
 
