@@ -51,7 +51,7 @@
 
         ros = new ROSLIB.Ros();
 
-        ros.connect('ws://localhost:9090');
+        ros.connect('ws://localhost:9091');
 
         pub = new ROSLIB.Topic({
           ros : ros,
@@ -90,14 +90,6 @@
     });
 
 
-    function set_input_val(val) {
-
-      var input = document.getElementById("input");
-      input.value = Number(val);
-
-    }
-
-
     function pub_input_val() {
 
       var input = document.getElementById("input");
@@ -105,6 +97,19 @@
       pub.publish(msg);
 
     }
+
+    function set_input_val(val) {
+
+      var input = document.getElementById("input");
+      input.value = Number(val);
+
+    }
+
+    function change_input(val)
+    {
+      pub_input_val();
+    }
+
 
 // timer callback: https://hakuhin.jp/js/timer.html
 function TimerInterval(callback,delay){
@@ -137,7 +142,6 @@ function TimerInterval(callback,delay){
 // ------------------------------------------------------------
 var timer = new TimerInterval(function (){
 
-  pub_input_val();
 
 } , 100);
 

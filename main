@@ -2,7 +2,7 @@ SCRIPT_DIR=$(cd $(dirname $0); pwd)
 WS=catkin_ws
 
 echo " - rosbridge server"
-gnome-terminal --tab -t "rosbridge server" -- bash -c "source /opt/ros/*/setup.bash; source $HOME/$WS/devel/setup.bash; roslaunch  rosbridge_server rosbridge_websocket.launch; exec bash"
+gnome-terminal --tab -t "rosbridge server" -- bash -c "source /opt/ros/*/setup.bash; source $HOME/$WS/devel/setup.bash; roslaunch  rosbridge_server rosbridge_websocket.launch port:=9091; exec bash"
 
 echo " - web video server"
 gnome-terminal --tab -t "web video server" -- bash -c "source /opt/ros/*/setup.bash; source $HOME/$WS/devel/setup.bash; rosrun web_video_server web_video_server; exec bash"
