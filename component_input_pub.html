@@ -17,6 +17,8 @@
     var ros = null;
     var pub = null;
     var data_type = "Float64";
+    var min_limit = null;
+    var max_limit = null;
 
 // --------- get window parameter ---------
 
@@ -48,6 +50,22 @@
 
         input = document.getElementById("input");
         input.step = input_step;
+
+
+        p = params.get("min_limit");
+        if (p!=null)
+        {
+          input.min = p;
+          min_limit = p;
+        }
+
+        p = params.get("max_limit");
+        if (p!=null)
+        {
+          input.max = p;
+          max_limit = p;
+        }
+
 
         ros = new ROSLIB.Ros();
 
@@ -105,8 +123,35 @@
 
     }
 
-    function change_input(val)
+    function change_input()
     {
+
+      var input = document.getElementById("input");
+      console.log(input);
+      console.log(input.min==null);
+      console.log(input.min!=null);
+      console.log(input.value);
+      console.log(input.max);
+      console.log(input.max==null);
+
+      if (min_limit!=null)
+      {
+        if (input.value < min_limit)
+        {
+          input.value = min_limit;
+          console.log("a");
+        }
+      }
+
+      if (max_limit!=null)
+      {
+        if (input.value > max_limit)
+        {
+          input.value = max_limit;
+          console.log("a");
+        }
+      }
+
       pub_input_val();
     }
 
@@ -151,7 +196,7 @@ var timer = new TimerInterval(function (){
 </head>
 <body>
   <a id="output"></a>
-  <input type="number" id="input" name="input" step="0.01" oninput="change_input();">
+  <input type="number" id="input" name="input" step="0.01" onchange="change_input();">
 </body>
 </html>
 
