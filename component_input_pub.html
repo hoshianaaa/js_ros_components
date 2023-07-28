@@ -108,10 +108,10 @@
     });
 
 
-    function pub_input_val() {
+    function pub_input_val(val) {
 
-      var input = document.getElementById("input");
-      msg.data = Number(input.value);
+//      var input = document.getElementById("input");
+      msg.data = Number(val);
       pub.publish(msg);
 
     }
@@ -127,32 +127,32 @@
     {
 
       var input = document.getElementById("input");
-      console.log(input);
-      console.log(input.min==null);
-      console.log(input.min!=null);
       console.log(input.value);
-      console.log(input.max);
-      console.log(input.max==null);
+      var val = Number(input.value);
 
       if (min_limit!=null)
       {
-        if (input.value < min_limit)
+        if (val < min_limit)
         {
-          input.value = min_limit;
-          console.log("a");
+
+          pub_input_val(min_limit);
+          return;
+
         }
       }
-
       if (max_limit!=null)
       {
-        if (input.value > max_limit)
+        if (val > max_limit)
         {
-          input.value = max_limit;
-          console.log("a");
+
+          pub_input_val(max_limit);
+          return;
+
         }
       }
 
-      pub_input_val();
+      pub_input_val(val);
+
     }
 
 
@@ -187,7 +187,6 @@ function TimerInterval(callback,delay){
 // ------------------------------------------------------------
 var timer = new TimerInterval(function (){
 
-
 } , 100);
 
 
@@ -196,7 +195,7 @@ var timer = new TimerInterval(function (){
 </head>
 <body>
   <a id="output"></a>
-  <input type="number" id="input" name="input" step="0.01" onchange="change_input();">
+  <input type="number" id="input" name="input" step="0.01" oninput="change_input();">
 </body>
 </html>
 
